@@ -10,7 +10,8 @@ class Home:
 
     def createWindow(self):
         self.win = QMainWindow()
-        self.win.setGeometry(50, 50, 680, 557)
+        self.win.setMinimumWidth(500)
+        self.win.setMinimumHeight(400)
         self.win.setWindowTitle("Home")
         self.buttonGroups()
         wid = QWidget(self.win)

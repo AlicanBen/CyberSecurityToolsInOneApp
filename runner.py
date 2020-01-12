@@ -2,11 +2,10 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from  UI import Home
-from UI.Crunch import Crunch
+from UI import *
 
-#windows=Crunch()
-windows=Crunch()
+#windows=Home()
+windows=Dnsenum()
 def window():
     app = QApplication(sys.argv)
     windows.createWindow()

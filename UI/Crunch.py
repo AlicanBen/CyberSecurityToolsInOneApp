@@ -11,7 +11,7 @@ class Crunch:
 
     def createWindow(self):
         self.win = QMainWindow()
-        self.win.setGeometry(50, 50, 680, 557)
+        self.win.setMinimumWidth(300)
         self.win.setWindowTitle("Crunch")
         self.form()
         wid = QWidget(self.win)
@@ -171,8 +171,10 @@ class Crunch:
         if (checkBox.isChecked()):
             self.scrollArea.setVisible(True)
             self.gbox3.setVisible(False)
+            self.win.setMinimumHeight(350)
         else:
             self.scrollArea.setVisible(False)
             self.gbox3.setVisible(True)
+            self.win.setFixedHeight(400)
 
 
