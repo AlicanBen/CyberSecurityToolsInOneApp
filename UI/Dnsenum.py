@@ -1,5 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
-    QHBoxLayout, QCheckBox, QScrollArea, QRadioButton, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, QCheckBox
 from Utils.Tools import Tools
 
 

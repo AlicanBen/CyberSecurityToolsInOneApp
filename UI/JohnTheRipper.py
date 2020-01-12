@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
-    QHBoxLayout,QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QGroupBox, QRadioButton, QPushButton, \
+    QHBoxLayout, QFileDialog
+
 from Utils.Tools import Tools
 
 
-class Dirb:
+class JohnTheRipper:
 
     def __init__(self):
 
@@ -12,7 +13,7 @@ class Dirb:
     def createWindow(self):
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
-        self.win.setWindowTitle("DIRB")
+        self.win.setWindowTitle("John The Ripper")
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
@@ -24,23 +25,15 @@ class Dirb:
 
     def form(self):
         self.vBox=QVBoxLayout()
-        self.vBox.addWidget(QLabel("Url"))
-        self.urlEdit=QLineEdit()
-        self.vBox.addWidget(self.urlEdit)
         self.fileDialog()
         self.vBox.addWidget(self.fileGBox)
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.outputFileedit = QLineEdit()
-        self.vBox.addWidget(self.outputFileedit)
-        self.startButton=QPushButton("Start")
+        self.startButton=QPushButton("Decrypt")
         self.vBox.addWidget(self.startButton)
 
     def fileDialog(self):
         self.fileGBox=QGroupBox("Directory List")
         fileHbox=QHBoxLayout()
-        self.fileLabel=QLabel("Select file")
-        fileHbox.addWidget(self.fileLabel)
-        self.fileButton=QPushButton("File")
+        self.fileButton=QPushButton("Select File")
         self.fileButton.clicked.connect(self.pushButton_handler)
         fileHbox.addWidget(self.fileButton)
         self.fileGBox.setLayout(fileHbox)
@@ -50,7 +43,7 @@ class Dirb:
         filedesc = QFileDialog.getOpenFileName()
         path = filedesc[0]
         fileName=path.split("/")
-        self.fileLabel.setText(fileName[-1])
+        self.fileButton.setText(fileName[-1])
 
 
     def pushButton_handler(self):

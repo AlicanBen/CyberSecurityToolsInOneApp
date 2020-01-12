@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from UI import *
 
 #windows=Home()
-windows=Dnsenum()
+windows=Maskprocessor()
 def window():
     app = QApplication(sys.argv)
     windows.createWindow()

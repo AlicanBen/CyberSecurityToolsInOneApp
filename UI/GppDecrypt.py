@@ -1,9 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
-    QHBoxLayout,QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLineEdit, QCheckBox,QHBoxLayout
 from Utils.Tools import Tools
 
 
-class Dirb:
+class GppDecrypt:
 
     def __init__(self):
 
@@ -12,7 +11,7 @@ class Dirb:
     def createWindow(self):
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
-        self.win.setWindowTitle("DIRB")
+        self.win.setWindowTitle("Gpp-Decrypt")
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
@@ -24,38 +23,14 @@ class Dirb:
 
     def form(self):
         self.vBox=QVBoxLayout()
-        self.vBox.addWidget(QLabel("Url"))
-        self.urlEdit=QLineEdit()
-        self.vBox.addWidget(self.urlEdit)
-        self.fileDialog()
-        self.vBox.addWidget(self.fileGBox)
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.outputFileedit = QLineEdit()
-        self.vBox.addWidget(self.outputFileedit)
-        self.startButton=QPushButton("Start")
-        self.vBox.addWidget(self.startButton)
-
-    def fileDialog(self):
-        self.fileGBox=QGroupBox("Directory List")
-        fileHbox=QHBoxLayout()
-        self.fileLabel=QLabel("Select file")
-        fileHbox.addWidget(self.fileLabel)
-        self.fileButton=QPushButton("File")
-        self.fileButton.clicked.connect(self.pushButton_handler)
-        fileHbox.addWidget(self.fileButton)
-        self.fileGBox.setLayout(fileHbox)
-
-
-    def open_dialog_box(self):
-        filedesc = QFileDialog.getOpenFileName()
-        path = filedesc[0]
-        fileName=path.split("/")
-        self.fileLabel.setText(fileName[-1])
-
-
-    def pushButton_handler(self):
-        print("Button pressed")
-        self.open_dialog_box()
+        gbox=QGroupBox("Group Policy Preferences")
+        hbox = QHBoxLayout()
+        self.searchEdit = QLineEdit()
+        self.searchButton = QPushButton("Decrypt")
+        hbox.addWidget(self.searchEdit)
+        hbox.addWidget(self.searchButton)
+        gbox.setLayout(hbox)
+        self.vBox.addWidget(gbox)
 
 
     def createMenu(self):
