@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from UI import *
 
 #windows=Home()
-windows=Maskprocessor()
+windows=Netdiscover()
 def window():
     app = QApplication(sys.argv)
     windows.createWindow()
