@@ -10,3 +10,4 @@ from UI.Hping3 import Hping3
 from UI.JohnTheRipper import JohnTheRipper
 from UI.Maskprocessor import Maskprocessor
 from UI.Netdiscover import Netdiscover
+from UI.Nikto import Nikto

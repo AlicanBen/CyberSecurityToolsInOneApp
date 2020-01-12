@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from UI import *
 
 #windows=Home()
-windows=Netdiscover()
+windows=Nikto()
 def window():
     app = QApplication(sys.argv)
     windows.createWindow()
