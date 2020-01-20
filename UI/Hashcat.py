@@ -1,20 +1,19 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QMainWindow, QLabel, \
-    QCheckBox, QScrollArea, QRadioButton, QComboBox, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QGroupBox, QHBoxLayout, \
+    QFileDialog, QCheckBox, QScrollArea, QRadioButton
 
 from Utils.Tools import Tools
+
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
-
-class Nmap:
+class Hashcat:
     def __init__(self):
         super().__init__()
 
     def createWindow(self):
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
-        self.win.setMinimumHeight(400)
-        self.win.setWindowTitle("Nmap")
+        self.win.setWindowTitle("Hashcat")
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
@@ -25,82 +24,52 @@ class Nmap:
         self.win.show()
 
     def form(self):
-        self.vBox=QVBoxLayout()
-        self.scan_range_edit=QLineEdit()
-        self.scan_range_edit.setPlaceholderText("1.1.1.1/24")
-        self.output_file_edit=QLineEdit()
-        self.type_xml=QRadioButton("XML Output")
-        self.type_txt=QRadioButton("TXT Output")
-        self.scrolableOptions()
-        self.speedComboBox()
-        self.port_range=QLineEdit()
-        self.button_scan=QPushButton("Scan")
+        self.vBox = QVBoxLayout()
 
-        self.vBox.addWidget(QLabel("Scan Range (e.g. 1.1.1.1/24)"))
-        self.vBox.addWidget(self.scan_range_edit)
-        self.vBox.addWidget(QLabel("Output Type"))
-        self.vBox.addWidget(self.type_xml)
-        self.vBox.addWidget(self.type_txt)
+        self.fileDialog()
+        self.vBox.addWidget(self.fileGBox)
+
+        self.vBox.addWidget(QLabel("How To Seperate"))
+        self.seperator = QLineEdit()
+        self.vBox.addWidget(self.seperator)
+
         self.vBox.addWidget(QLabel("Output File Name"))
-        self.vBox.addWidget(self.output_file_edit)
-        self.vBox.addWidget(self.options)
-        self.vBox.addWidget(self.speedGBox)
-        self.vBox.addWidget(QLabel("Port Range (e.g. 1-1000, default= all ports)"))
-        self.vBox.addWidget(self.port_range)
-        self.vBox.addWidget(self.button_scan)
+        self.outputFileedit = QLineEdit()
+        self.vBox.addWidget(self.outputFileedit)
+        self.outputFormatScrollAreas()
+        self.attackModeScrollAreas()
 
-    def scrolableOptions(self):
-        self.options=QGroupBox("Options")
-        self.options.setMaximumHeight(200)
-        top_lvl_vBox=QVBoxLayout()
-        self.optionScrollArea = QScrollArea()
-        optionGBox = QGroupBox()
-        vBox = QVBoxLayout()
+        self.outputFormat = QCheckBox("Output Format")
+        self.outputFormat.toggled.connect(lambda: self.checkboxHandler(self.outputFormat,self.outputFormatScrollArea))
+        self.vBox.addWidget(self.outputFormat)
+        self.vBox.addWidget(self.outputFormatScrollArea)
 
-        self.enableOSDetect = QCheckBox("Enable OS Detection")
-        self.version_info = QCheckBox("Determine Service/Version İnfo")
-        self.scan_Udp = QCheckBox("UDP Scan")
-        self.scan_TCP_SYN = QCheckBox("TCP SYN Scan")
-        self.scan_connect = QCheckBox("Connect Scan")
-        self.scan_ACK = QCheckBox("ACK Scan")
-        self.scan_window = QCheckBox("Window Scan")
-        self.scan_maimon = QCheckBox("Maimon Scan")
-        self.scan_TCP_null = QCheckBox("TCP Null Scan")
-        self.scan_TCP_FIN = QCheckBox("TCP FIN Scan")
-        self.scan_TCP_xmas = QCheckBox("TCP Xmas Scan")
-        self.scan_SCTP_INIT = QCheckBox("SCTP INIT Scan")
-        self.scan_COOKIE_ECHO = QCheckBox("COOKIE-ECHO Xmas Scan")
+        self.attackMode = QCheckBox("Attack Mode")
+        self.attackMode.toggled.connect(lambda: self.checkboxHandler(self.attackMode, self.attackModeScrollArea))
+        self.vBox.addWidget(self.attackMode)
+        self.vBox.addWidget(self.attackModeScrollArea)
+        self.startButton = QPushButton("Start")
+        self.vBox.addWidget(self.startButton)
 
+    def fileDialog(self):
+        self.fileGBox = QGroupBox("Hashed File")
+        fileHbox = QHBoxLayout()
+        self.fileLabel = QLabel("Select file")
+        fileHbox.addWidget(self.fileLabel)
+        self.fileButton = QPushButton("File")
+        self.fileButton.clicked.connect(self.pushButton_handler)
+        fileHbox.addWidget(self.fileButton)
+        self.fileGBox.setLayout(fileHbox)
 
-        vBox.addWidget(self.enableOSDetect)
-        vBox.addWidget(self.version_info)
-        vBox.addWidget(self.scan_Udp)
-        vBox.addWidget(self.scan_TCP_SYN)
-        vBox.addWidget(self.scan_connect)
-        vBox.addWidget(self.scan_ACK)
-        vBox.addWidget(self.scan_window)
-        vBox.addWidget(self.scan_maimon)
-        vBox.addWidget(self.scan_TCP_null)
-        vBox.addWidget(self.scan_TCP_FIN)
-        vBox.addWidget(self.scan_TCP_xmas)
-        vBox.addWidget(self.scan_SCTP_INIT)
-        vBox.addWidget(self.scan_COOKIE_ECHO)
+    def open_dialog_box(self):
+        filedesc = QFileDialog.getOpenFileName()
+        path = filedesc[0]
+        fileName = path.split("/")
+        self.fileLabel.setText(fileName[-1])
 
-        optionGBox.setLayout(vBox)
-        self.optionScrollArea.setWidget(optionGBox)
-        top_lvl_vBox.addWidget(self.optionScrollArea)
-        self.options.setLayout(top_lvl_vBox)
-
-    def speedComboBox(self):
-        self.speedGBox=QGroupBox()
-        self.speedGBox.setStyleSheet("QGroupBox { border-style: none;}")
-        hbox=QHBoxLayout()
-        hbox.addWidget(QLabel("Speed"))
-        self.combobox=QComboBox()
-        self.combobox.addItems(["Default(5)","1","2","3","4","5"])
-        self.combobox.setCurrentText("Default(5)")
-        hbox.addWidget(self.combobox)
-        self.speedGBox.setLayout(hbox)
+    def pushButton_handler(self):
+        print("Button pressed")
+        self.open_dialog_box()
 
     def createMenu(self):
         bar = self.win.menuBar()
@@ -201,6 +170,80 @@ class Nmap:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def checkboxHandler(self, checbox, groupBox):
+        if (checbox.isChecked()):
+            self.win.setMinimumWidth(300)
+            self.win.setMinimumHeight(500)
+            groupBox.setVisible(True)
+        else:
+            self.win.setFixedWidth(250)
+            self.win.setFixedHeight(300)
+            groupBox.setVisible(False)
+
+    def outputFormatScrollAreas(self):
+        self.outputFormatScrollArea = QScrollArea()
+        self.outputFormatScrollArea.setVisible(False)
+        self.outputFormatScrollArea.setFixedHeight(100)
+        outputFormatGBox = QGroupBox()
+        vBox = QVBoxLayout()
+        self.hashWithSalt = QRadioButton("hash[:salt]")
+        self.plain = QRadioButton("plain")
+        self.hashWithSaltAndplain = QRadioButton("hash[:salt]: plain")
+        self.hexPlain = QRadioButton("hex_plain")
+        self.hashSaltWithHexPlain = QRadioButton("hash[:salt]: hex_plain")
+        self.plainWithHexPlain = QRadioButton("plain: hex_plain")
+        self.hashSaltPlainWithHexPlain = QRadioButton("hash[:salt]: plain:hex_plain")
+        self.crackpos = QRadioButton("crackpos")
+        self.hashSaltWithCrackpos = QRadioButton("hash[:salt]: crack_pos")
+        self.plainWithCrackpos = QRadioButton("plain: crack_pos")
+        self.hashSaltPlainWithCrackpos = QRadioButton("hash[:salt]: plain: crack_pos")
+        self.hexPlainWithCrackpos = QRadioButton("hex_plain: crack_pos")
+        self.hashSaltHexPlainWithCrackpos = QRadioButton("hash[:salt]: hex_plain:crack_pos")
+        self.plainHexPlainWithCrackpos = QRadioButton("plain: hex_plain:crack_pos")
+        self.hashSaltPlainHexPlainWithCrackpos = QRadioButton("hash[:salt]: plain:hex_plain: crack_pos")
+
+        vBox.addWidget(self.hashWithSalt)
+        vBox.addWidget(self.plain)
+        vBox.addWidget(self.hashWithSaltAndplain)
+        vBox.addWidget(self.hexPlain)
+        vBox.addWidget(self.hashSaltWithHexPlain)
+        vBox.addWidget(self.plainWithHexPlain)
+        vBox.addWidget(self.hashSaltPlainWithHexPlain)
+        vBox.addWidget(self.crackpos)
+        vBox.addWidget(self.hashSaltWithCrackpos)
+        vBox.addWidget(self.plainWithCrackpos)
+        vBox.addWidget(self.hashSaltPlainWithCrackpos)
+        vBox.addWidget(self.hexPlainWithCrackpos)
+        vBox.addWidget(self.hashSaltHexPlainWithCrackpos)
+        vBox.addWidget(self.plainHexPlainWithCrackpos)
+        vBox.addWidget(self.hashSaltPlainHexPlainWithCrackpos)
+
+        outputFormatGBox.setLayout(vBox)
+        self.outputFormatScrollArea.setWidget(outputFormatGBox)
+
+    def attackModeScrollAreas(self):
+        self.attackModeScrollArea = QScrollArea()
+        self.attackModeScrollArea.setVisible(False)
+        self.attackModeScrollArea.setFixedHeight(100)
+        attackModeGBox = QGroupBox()
+        vBox = QVBoxLayout()
+        self.straight = QRadioButton("Straight")
+        self.combination = QRadioButton("Combination")
+        self.bruteForce = QRadioButton("Brute - force")
+        self.hybridWordlistPlusMask = QRadioButton(" Hybrid Wordlist + Mask")
+        self.hybridMaskPlusWordlist = QRadioButton(" Hybrid Mask + Wordlist")
+
+
+
+        vBox.addWidget(self.straight)
+        vBox.addWidget(self.combination)
+        vBox.addWidget(self.bruteForce)
+        vBox.addWidget(self.hybridWordlistPlusMask)
+        vBox.addWidget(self.hybridMaskPlusWordlist)
+
+        attackModeGBox.setLayout(vBox)
+        self.attackModeScrollArea.setWidget(attackModeGBox)
 
     def __del__(self):
         self.win.close()

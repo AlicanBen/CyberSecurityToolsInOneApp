@@ -12,3 +12,5 @@ from UI.Maskprocessor import Maskprocessor
 from UI.Netdiscover import Netdiscover
 from UI.Nikto import Nikto
 from  UI.Nmap import Nmap
+from  UI.TheHarvester import TheHarvester
+from  UI.Hashcat import Hashcat

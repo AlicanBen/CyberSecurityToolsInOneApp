@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QW
     QHBoxLayout, QCheckBox, QScrollArea, QRadioButton
 from Utils.Tools import Tools
 
+from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class Crunch:
 
@@ -20,7 +22,6 @@ class Crunch:
         hbox = QVBoxLayout()
         hbox.addLayout(self.top_lvl_vBox)
         wid.setLayout(hbox)
-
     def showWindow(self):
         self.win.show()
 
@@ -45,6 +46,8 @@ class Crunch:
         v2.addWidget(self.enrty_max_length)
         hbox.addLayout(v2)
         g1=QGroupBox()
+
+        g1.setStyleSheet("QGroupBox { border-style: none;}")
         g1.setLayout(hbox)
         self.top_lvl_vBox.addWidget(g1)
 
@@ -55,6 +58,8 @@ class Crunch:
         v3.addWidget(outputfileLabel)
         v3.addWidget(self.outputfileEdit)
         gbox=QGroupBox()
+        gbox.setStyleSheet("QGroupBox { border-style: none;}")
+
         gbox.setLayout(v3)
         self.top_lvl_vBox.addWidget(gbox)
 
@@ -116,6 +121,8 @@ class Crunch:
         self.mixalpha_numeric_all.toggled.connect(lambda: self.btnstate(self.b1))
         vs.addWidget(self.mixalpha_numeric_all)
         gboxs=QGroupBox()
+
+        gboxs.setStyleSheet("QGroupBox { border-style: none;}")
         gboxs.setLayout(vs)
         self.scrollArea.setWidget(gboxs)
         self.top_lvl_vBox.addWidget(self.scrollArea)
@@ -127,45 +134,124 @@ class Crunch:
         v5.addWidget(charsetLbl)
         v5.addWidget(self.charsetEdit)
         self.gbox3 = QGroupBox()
+        self.gbox3.setStyleSheet("QGroupBox { border-style: none;}")
         self.gbox3.setLayout(v5)
         self.gbox3.setVisible(False)
         self.top_lvl_vBox.addWidget(self.gbox3)
+        vs = QHBoxLayout()
 
-        self.button=QPushButton("Create List")
-        self.top_lvl_vBox.addWidget(self.button)
+        self.create=QPushButton("Create List")
+        self.cancel=QPushButton("Cancel")
+        vs.addWidget(self.cancel)
+        vs.addWidget(self.create)
+        ngbox=QGroupBox()
+        ngbox.setLayout(vs)
+        ngbox.setStyleSheet("QGroupBox { border-style: none;}")
+        self.top_lvl_vBox.addWidget(ngbox)
 
     def createMenu(self):
-        bar=self.win.menuBar()
+        bar = self.win.menuBar()
 
-        bar.addAction("Home")
+        self.actionHome = bar.addAction("Home")
+        self.actionHome.triggered.connect(lambda: self.buttonClickHandler(self.actionHome.text()))
 
-        tools=bar.addMenu("Tools")
+        tools = bar.addMenu("Tools")
 
-        tools.addAction(Tools.CRUNCH.name)
-        tools.addAction(Tools.DIRB.name)
-        tools.addAction(Tools.DMITRY.name)
-        tools.addAction(Tools.DNSENUM.name)
-        tools.addAction(Tools.GPP_DECRYPT.name.replace("_","-"))
-        tools.addAction(Tools.HASH_IDENTIFIER.name.replace("_","-"))
-        tools.addAction(Tools.HASHCAT.name)
-        tools.addAction(Tools.HPING3.name)
-        tools.addAction(Tools.JOHN_THE_RIPPER.name.replace("_"," "))
-        tools.addAction(Tools.MASKPROCESSOR.name)
-        tools.addAction(Tools.NETDISCOVER.name)
-        tools.addAction(Tools.NIKTO.name)
-        tools.addAction(Tools.NMAP.name)
-        tools.addAction(Tools.SEARCHPLOIT.name)
-        tools.addAction(Tools.THE_HARVESTER.name.replace("_"," "))
+        self.actionCrunch = tools.addAction(Tools.CRUNCH.name)
+        self.actionCrunch.triggered.connect(lambda: self.buttonClickHandler(self.actionCrunch.text()))
 
-        report=bar.addMenu("Report")
+        self.actionDirb = tools.addAction(Tools.DIRB.name)
+        self.actionDirb.triggered.connect(lambda: self.buttonClickHandler(self.actionDirb.text()))
+
+        self.actionDmitry = tools.addAction(Tools.DMITRY.name)
+        self.actionDmitry.triggered.connect(lambda: self.buttonClickHandler(self.actionDmitry.text()))
+
+        self.actionDnsenum = tools.addAction(Tools.DNSENUM.name)
+        self.actionDnsenum.triggered.connect(lambda: self.buttonClickHandler(self.actionDnsenum.text()))
+
+        self.actionGppDecrypt = tools.addAction(Tools.GPP_DECRYPT.name.replace("_", "-"))
+        self.actionGppDecrypt.triggered.connect(lambda: self.buttonClickHandler(self.actionGppDecrypt.text()))
+
+        self.actionHashIdentifier = tools.addAction(Tools.HASH_IDENTIFIER.name.replace("_", "-"))
+        self.actionHashIdentifier.triggered.connect(lambda: self.buttonClickHandler(self.actionHashIdentifier.text()))
+
+        self.actionHashcat = tools.addAction(Tools.HASHCAT.name)
+        self.actionHashcat.triggered.connect(lambda: self.buttonClickHandler(self.actionHashcat.text()))
+
+        self.actionHping = tools.addAction(Tools.HPING3.name)
+        self.actionHping.triggered.connect(lambda: self.buttonClickHandler(self.actionHping.text()))
+
+        self.actionJohnTheRipper = tools.addAction(Tools.JOHN_THE_RIPPER.name.replace("_", " "))
+        self.actionJohnTheRipper.triggered.connect(lambda: self.buttonClickHandler(self.actionJohnTheRipper.text()))
+
+        self.actionMaskprocessor = tools.addAction(Tools.MASKPROCESSOR.name)
+        self.actionMaskprocessor.triggered.connect(lambda: self.buttonClickHandler(self.actionMaskprocessor.text()))
+
+        self.actionNetdiscover = tools.addAction(Tools.NETDISCOVER.name)
+        self.actionNetdiscover.triggered.connect(lambda: self.buttonClickHandler(self.actionNetdiscover.text()))
+
+        self.actionNikto = tools.addAction(Tools.NIKTO.name)
+        self.actionNikto.triggered.connect(lambda: self.buttonClickHandler(self.actionNikto.text()))
+
+        self.actionNmap = tools.addAction(Tools.NMAP.name)
+        self.actionNmap.triggered.connect(lambda: self.buttonClickHandler(self.actionNmap.text()))
+
+        self.actionSearchploit = tools.addAction(Tools.SEARCHPLOIT.name)
+        self.actionSearchploit.triggered.connect(lambda: self.buttonClickHandler(self.actionSearchploit.text()))
+
+        self.actionTheHarvester = tools.addAction(Tools.THE_HARVESTER.name.replace("_", " "))
+        self.actionTheHarvester.triggered.connect(lambda: self.buttonClickHandler(self.actionTheHarvester.text()))
+
+        report = bar.addMenu("Report")
 
         report.addAction("Create")
         report.addAction("Show")
         report.addAction("Delete")
         bar.addAction("About Us")
 
-    def __del__(self):
+    def buttonClickHandler(self, text):
+        self.window = QWidget()
+        self.ui = None;
+        if (text == Tools.CRUNCH.name):
+            self.ui = Crunch.Crunch()
+        elif (text == Tools.DIRB.name):
+            self.ui = Dirb.Dirb()
+        elif (text == Tools.DMITRY.name):
+            self.ui = Dmitry.Dmitry()
+        elif (text == Tools.DNSENUM.name):
+            self.ui = Dnsenum.Dnsenum()
+        elif (text == Tools.GPP_DECRYPT.name.replace("_", "-")):
+            self.ui = GppDecrypt.GppDecrypt()
+        elif (text == Tools.HASH_IDENTIFIER.name.replace("_", "-")):
+            self.ui = HashIdentifier.HashIdentifier()
+        elif (text == Tools.HASHCAT.name):
+            self.ui = Hashcat.Hashcat()
+        elif (text == Tools.HPING3.name):
+            self.ui = Hping3.Hping3()
+        elif (text == Tools.JOHN_THE_RIPPER.name.replace("_", " ")):
+            self.ui = JohnTheRipper.JohnTheRipper()
+        elif (text == Tools.MASKPROCESSOR.name):
+            self.ui = Maskprocessor.Maskprocessor()
+        elif (text == Tools.NETDISCOVER.name):
+            self.ui = Netdiscover.Netdiscover()
+        elif (text == Tools.NIKTO.name):
+            self.ui = Nikto.Nikto()
+        elif (text == Tools.NMAP.name):
+            self.ui = Nmap.Nmap()
+        elif (text == Tools.SEARCHPLOIT.name):
+            self.ui = Searchploit.Searchploit()
+        elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):
+            self.ui = TheHarvester.TheHarvester()
+        elif (text == "Home"):
+            self.win.close()
+            self.ui = Home.Home()
+        self.ui.createWindow()
+        self.ui.showWindow()
         self.win.close()
+
+    def __del__(self):
+        print("asd")
+        self.win.destroy()
 
     def checkBoxController(self,checkBox):
         if (checkBox.isChecked()):

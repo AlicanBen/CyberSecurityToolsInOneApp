@@ -1,20 +1,19 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QMainWindow, QLabel, \
-    QCheckBox, QScrollArea, QRadioButton, QComboBox, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLineEdit, QLabel, QPushButton, QGroupBox, QHBoxLayout, \
+    QFileDialog, QCheckBox, QScrollArea
 
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
-
-class Nmap:
+class TheHarvester:
     def __init__(self):
+
         super().__init__()
 
     def createWindow(self):
         self.win = QMainWindow()
-        self.win.setMinimumWidth(250)
-        self.win.setMinimumHeight(400)
-        self.win.setWindowTitle("Nmap")
+        self.win.setMinimumWidth(320)
+        self.win.setWindowTitle("The Harvester")
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
@@ -26,81 +25,80 @@ class Nmap:
 
     def form(self):
         self.vBox=QVBoxLayout()
-        self.scan_range_edit=QLineEdit()
-        self.scan_range_edit.setPlaceholderText("1.1.1.1/24")
-        self.output_file_edit=QLineEdit()
-        self.type_xml=QRadioButton("XML Output")
-        self.type_txt=QRadioButton("TXT Output")
-        self.scrolableOptions()
-        self.speedComboBox()
-        self.port_range=QLineEdit()
-        self.button_scan=QPushButton("Scan")
+        self.vBox.addWidget(QLabel("Company Name/Domain"))
+        self.domain = QLineEdit()
+        self.vBox.addWidget(self.domain)
 
-        self.vBox.addWidget(QLabel("Scan Range (e.g. 1.1.1.1/24)"))
-        self.vBox.addWidget(self.scan_range_edit)
-        self.vBox.addWidget(QLabel("Output Type"))
-        self.vBox.addWidget(self.type_xml)
-        self.vBox.addWidget(self.type_txt)
+        self.vBox.addWidget(QLabel("Limit Of Result (Default:500"))
+        self.limit = QLineEdit()
+        self.vBox.addWidget(self.limit)
+
+        self.vBox.addWidget(QLabel("Start Result Number (Default:0"))
+        self.limit = QLineEdit()
+        self.vBox.addWidget(self.limit)
+
+
         self.vBox.addWidget(QLabel("Output File Name"))
-        self.vBox.addWidget(self.output_file_edit)
-        self.vBox.addWidget(self.options)
-        self.vBox.addWidget(self.speedGBox)
-        self.vBox.addWidget(QLabel("Port Range (e.g. 1-1000, default= all ports)"))
-        self.vBox.addWidget(self.port_range)
-        self.vBox.addWidget(self.button_scan)
+        self.outputFileedit = QLineEdit()
+        self.vBox.addWidget(self.outputFileedit)
+        self.useShodan=QCheckBox("Use Shodan")
+        self.vBox.addWidget(self.useShodan)
 
-    def scrolableOptions(self):
-        self.options=QGroupBox("Options")
-        self.options.setMaximumHeight(200)
-        top_lvl_vBox=QVBoxLayout()
-        self.optionScrollArea = QScrollArea()
-        optionGBox = QGroupBox()
+        self.sourceScrollArea()
+        self.source=QCheckBox("Source")
+        self.vBox.addWidget(self.source)
+
+        self.source.toggled.connect(lambda: self.checkboxHandler(self.source, self.sourceScrollArea))
+        self.vBox.addWidget(self.sourceScrollArea)
+        self.startButton=QPushButton("Run")
+        self.vBox.addWidget(self.startButton)
+
+    def sourceScrollArea(self):
+        self.sourceScrollArea = QScrollArea()
+        self.sourceScrollArea.setVisible(False)
+        self.sourceScrollArea.setMinimumWidth(300)
+        self.sourceScrollArea.setFixedHeight(100)
+        sourceGBox = QGroupBox()
         vBox = QVBoxLayout()
+        self.file_upload = QCheckBox("File Upload")
+        self.interesting_file = QCheckBox("Interesting File / Seen in logs")
+        self.misconfiguration = QCheckBox("Misconfiguration / Default File")
+        self.disclosure = QCheckBox("Information Disclosure ")
+        self.injection = QCheckBox("Injection (XSS/Script/HTML)")
+        self.rfRetrieval_in_web_root = QCheckBox("Remote File Retrieval - Inside Web Root")
+        self.rfRetrieval_in_web_root.setMinimumWidth(300)
+        self.dos = QCheckBox("Denial of Service")
+        self.rfRetrieval_server_wide = QCheckBox("Remote File Retrieval - Server Wide")
+        self.remote_shell = QCheckBox("Command Execution / Remote Shell")
+        self.sqlInjection = QCheckBox("SQL Injection")
+        self.authBypass = QCheckBox("Authentication Bypass")
+        self.swIdentification = QCheckBox("Software Identification ")
+        self.rsInclusion = QCheckBox("Remote Source Inclusion")
+        self.adminConsole = QCheckBox("Administrative Console")
 
-        self.enableOSDetect = QCheckBox("Enable OS Detection")
-        self.version_info = QCheckBox("Determine Service/Version İnfo")
-        self.scan_Udp = QCheckBox("UDP Scan")
-        self.scan_TCP_SYN = QCheckBox("TCP SYN Scan")
-        self.scan_connect = QCheckBox("Connect Scan")
-        self.scan_ACK = QCheckBox("ACK Scan")
-        self.scan_window = QCheckBox("Window Scan")
-        self.scan_maimon = QCheckBox("Maimon Scan")
-        self.scan_TCP_null = QCheckBox("TCP Null Scan")
-        self.scan_TCP_FIN = QCheckBox("TCP FIN Scan")
-        self.scan_TCP_xmas = QCheckBox("TCP Xmas Scan")
-        self.scan_SCTP_INIT = QCheckBox("SCTP INIT Scan")
-        self.scan_COOKIE_ECHO = QCheckBox("COOKIE-ECHO Xmas Scan")
+        vBox.addWidget(self.file_upload)
+        vBox.addWidget(self.interesting_file)
+        vBox.addWidget(self.misconfiguration)
+        vBox.addWidget(self.disclosure)
+        vBox.addWidget(self.injection)
+        vBox.addWidget(self.rfRetrieval_in_web_root)
+        vBox.addWidget(self.dos)
+        vBox.addWidget(self.rfRetrieval_server_wide)
+        vBox.addWidget(self.remote_shell)
+        vBox.addWidget(self.sqlInjection)
+        vBox.addWidget(self.authBypass)
+        vBox.addWidget(self.swIdentification)
+        vBox.addWidget(self.rsInclusion)
+        vBox.addWidget(self.adminConsole)
 
+        sourceGBox.setLayout(vBox)
+        self.sourceScrollArea.setWidget(sourceGBox)
 
-        vBox.addWidget(self.enableOSDetect)
-        vBox.addWidget(self.version_info)
-        vBox.addWidget(self.scan_Udp)
-        vBox.addWidget(self.scan_TCP_SYN)
-        vBox.addWidget(self.scan_connect)
-        vBox.addWidget(self.scan_ACK)
-        vBox.addWidget(self.scan_window)
-        vBox.addWidget(self.scan_maimon)
-        vBox.addWidget(self.scan_TCP_null)
-        vBox.addWidget(self.scan_TCP_FIN)
-        vBox.addWidget(self.scan_TCP_xmas)
-        vBox.addWidget(self.scan_SCTP_INIT)
-        vBox.addWidget(self.scan_COOKIE_ECHO)
-
-        optionGBox.setLayout(vBox)
-        self.optionScrollArea.setWidget(optionGBox)
-        top_lvl_vBox.addWidget(self.optionScrollArea)
-        self.options.setLayout(top_lvl_vBox)
-
-    def speedComboBox(self):
-        self.speedGBox=QGroupBox()
-        self.speedGBox.setStyleSheet("QGroupBox { border-style: none;}")
-        hbox=QHBoxLayout()
-        hbox.addWidget(QLabel("Speed"))
-        self.combobox=QComboBox()
-        self.combobox.addItems(["Default(5)","1","2","3","4","5"])
-        self.combobox.setCurrentText("Default(5)")
-        hbox.addWidget(self.combobox)
-        self.speedGBox.setLayout(hbox)
+    def checkboxHandler(self, checbox, groupBox):
+        if (checbox.isChecked()):
+            groupBox.setVisible(True)
+        else:
+            groupBox.setVisible(False)
 
     def createMenu(self):
         bar = self.win.menuBar()
