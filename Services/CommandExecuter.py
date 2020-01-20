@@ -21,7 +21,7 @@ class CommandExecuter:
 
 
 if __name__ == '__main__':
-    """ test=CommandExecuter("hash-identifier","098f6bcd4621d373cade4e832627b4f6")
+    test=CommandExecuter("hash-identifier","098f6bcd4621d373cade4e832627b4f6")
     result=test.execute()
     print(result)
     print("****************")
@@ -29,6 +29,6 @@ if __name__ == '__main__':
     if(res==""):
         print("Ne result")
     else:
-        print(res)"""
-    f=HashID("098f6bcd4621d373cade4e832627b4f6")
-    f.exec()
+        print(res)
+    """  f=HashID("098f6bcd4621d373cade4e832627b4f6")
+    f.exec()"""
