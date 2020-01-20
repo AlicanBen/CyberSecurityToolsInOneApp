@@ -1,5 +1,7 @@
 import subprocess
 
+from Services.HashID import HashID
+
 
 class CommandExecuter:
     __result=""
@@ -19,7 +21,7 @@ class CommandExecuter:
 
 
 if __name__ == '__main__':
-    test=CommandExecuter("crunch","4", "4", "0123456789abcdef", "-o", "4chars.txt")
+    """ test=CommandExecuter("hash-identifier","098f6bcd4621d373cade4e832627b4f6")
     result=test.execute()
     print(result)
     print("****************")
@@ -27,5 +29,6 @@ if __name__ == '__main__':
     if(res==""):
         print("Ne result")
     else:
-        print("asd")
-        print(res)
+        print(res)"""
+    f=HashID("098f6bcd4621d373cade4e832627b4f6")
+    f.exec()
