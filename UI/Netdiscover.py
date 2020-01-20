@@ -139,7 +139,7 @@ class Netdiscover:
         elif (text == Tools.MASKPROCESSOR.name):
             self.ui = Maskprocessor.Maskprocessor()
         elif (text == Tools.NETDISCOVER.name):
-            self.ui = Netdiscover.Netdiscover()
+            self.ui = Netdiscover()
         elif (text == Tools.NIKTO.name):
             self.ui = Nikto.Nikto()
         elif (text == Tools.NMAP.name):

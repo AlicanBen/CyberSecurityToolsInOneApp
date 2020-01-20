@@ -128,7 +128,7 @@ class JohnTheRipper:
         elif (text == Tools.HPING3.name):
             self.ui = Hping3.Hping3()
         elif (text == Tools.JOHN_THE_RIPPER.name.replace("_", " ")):
-            self.ui = JohnTheRipper.JohnTheRipper()
+            self.ui = JohnTheRipper()
         elif (text == Tools.MASKPROCESSOR.name):
             self.ui = Maskprocessor.Maskprocessor()
         elif (text == Tools.NETDISCOVER.name):

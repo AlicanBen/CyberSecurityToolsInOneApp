@@ -164,7 +164,7 @@ class Nikto:
         elif (text == Tools.NETDISCOVER.name):
             self.ui = Netdiscover.Netdiscover()
         elif (text == Tools.NIKTO.name):
-            self.ui = Nikto.Nikto()
+            self.ui = Nikto()
         elif (text == Tools.NMAP.name):
             self.ui = Nmap.Nmap()
         elif (text == Tools.SEARCHPLOIT.name):

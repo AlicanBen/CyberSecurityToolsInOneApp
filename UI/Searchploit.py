@@ -125,7 +125,7 @@ class Searchploit:
         elif (text == Tools.NMAP.name):
             self.ui = Nmap.Nmap()
         elif (text == Tools.SEARCHPLOIT.name):
-            self.ui = Searchploit.Searchploit()
+            self.ui = Searchploit()
         elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):
             self.ui = TheHarvester.TheHarvester()
         elif (text == "Home"):

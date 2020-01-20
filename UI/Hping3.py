@@ -126,7 +126,7 @@ class Hping3:
         elif (text == Tools.HASHCAT.name):
             self.ui = Hashcat.Hashcat()
         elif (text == Tools.HPING3.name):
-            self.ui = Hping3.Hping3()
+            self.ui = Hping3()
         elif (text == Tools.JOHN_THE_RIPPER.name.replace("_", " ")):
             self.ui = JohnTheRipper.JohnTheRipper()
         elif (text == Tools.MASKPROCESSOR.name):

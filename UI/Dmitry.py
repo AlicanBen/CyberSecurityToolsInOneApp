@@ -150,7 +150,7 @@ class Dmitry:
         elif (text == Tools.DIRB.name):
             self.ui = Dirb.Dirb()
         elif (text == Tools.DMITRY.name):
-            self.ui = Dmitry.Dmitry()
+            self.ui = Dmitry()
         elif (text == Tools.DNSENUM.name):
             self.ui = Dnsenum.Dnsenum()
         elif (text == Tools.GPP_DECRYPT.name.replace("_", "-")):

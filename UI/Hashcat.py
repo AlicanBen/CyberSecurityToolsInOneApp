@@ -147,7 +147,7 @@ class Hashcat:
         elif (text == Tools.HASH_IDENTIFIER.name.replace("_", "-")):
             self.ui = HashIdentifier.HashIdentifier()
         elif (text == Tools.HASHCAT.name):
-            self.ui = Hashcat.Hashcat()
+            self.ui = Hashcat()
         elif (text == Tools.HPING3.name):
             self.ui = Hping3.Hping3()
         elif (text == Tools.JOHN_THE_RIPPER.name.replace("_", " ")):

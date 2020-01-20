@@ -213,7 +213,7 @@ class Crunch:
         self.window = QWidget()
         self.ui = None;
         if (text == Tools.CRUNCH.name):
-            self.ui = Crunch.Crunch()
+            self.ui = Crunch()
         elif (text == Tools.DIRB.name):
             self.ui = Dirb.Dirb()
         elif (text == Tools.DMITRY.name):

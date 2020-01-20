@@ -106,7 +106,7 @@ class GppDecrypt:
         elif (text == Tools.DNSENUM.name):
             self.ui = Dnsenum.Dnsenum()
         elif (text == Tools.GPP_DECRYPT.name.replace("_", "-")):
-            self.ui = GppDecrypt.GppDecrypt()
+            self.ui = GppDecrypt()
         elif (text == Tools.HASH_IDENTIFIER.name.replace("_", "-")):
             self.ui = HashIdentifier.HashIdentifier()
         elif (text == Tools.HASHCAT.name):

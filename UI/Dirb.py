@@ -126,7 +126,7 @@ class Dirb:
         if (text == Tools.CRUNCH.name):
             self.ui = Crunch.Crunch()
         elif (text == Tools.DIRB.name):
-            self.ui = Dirb.Dirb()
+            self.ui = Dirb()
         elif (text == Tools.DMITRY.name):
             self.ui = Dmitry.Dmitry()
         elif (text == Tools.DNSENUM.name):
@@ -155,7 +155,7 @@ class Dirb:
             self.ui = TheHarvester.TheHarvester()
         elif (text == "Home"):
             self.win.close()
-            self.ui = Home()
+            self.ui = Home.Home()
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()

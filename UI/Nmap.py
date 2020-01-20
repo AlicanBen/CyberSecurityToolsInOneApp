@@ -190,7 +190,7 @@ class Nmap:
         elif (text == Tools.NIKTO.name):
             self.ui = Nikto.Nikto()
         elif (text == Tools.NMAP.name):
-            self.ui = Nmap.Nmap()
+            self.ui = Nmap()
         elif (text == Tools.SEARCHPLOIT.name):
             self.ui = Searchploit.Searchploit()
         elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):

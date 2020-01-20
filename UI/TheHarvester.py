@@ -192,7 +192,7 @@ class TheHarvester:
         elif (text == Tools.SEARCHPLOIT.name):
             self.ui = Searchploit.Searchploit()
         elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):
-            self.ui = TheHarvester.TheHarvester()
+            self.ui = TheHarvester()
         elif (text == "Home"):
             self.win.close()
             self.ui = Home.Home()

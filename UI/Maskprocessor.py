@@ -135,7 +135,7 @@ class Maskprocessor:
         elif (text == Tools.JOHN_THE_RIPPER.name.replace("_", " ")):
             self.ui = JohnTheRipper.JohnTheRipper()
         elif (text == Tools.MASKPROCESSOR.name):
-            self.ui = Maskprocessor.Maskprocessor()
+            self.ui = Maskprocessor()
         elif (text == Tools.NETDISCOVER.name):
             self.ui = Netdiscover.Netdiscover()
         elif (text == Tools.NIKTO.name):

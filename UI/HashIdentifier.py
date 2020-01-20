@@ -107,7 +107,7 @@ class HashIdentifier:
         elif (text == Tools.GPP_DECRYPT.name.replace("_", "-")):
             self.ui = GppDecrypt.GppDecrypt()
         elif (text == Tools.HASH_IDENTIFIER.name.replace("_", "-")):
-            self.ui = HashIdentifier.HashIdentifier()
+            self.ui = HashIdentifier()
         elif (text == Tools.HASHCAT.name):
             self.ui = Hashcat.Hashcat()
         elif (text == Tools.HPING3.name):

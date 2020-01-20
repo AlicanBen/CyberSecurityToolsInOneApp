@@ -148,7 +148,7 @@ class Dnsenum:
         elif (text == Tools.DMITRY.name):
             self.ui = Dmitry.Dmitry()
         elif (text == Tools.DNSENUM.name):
-            self.ui = Dnsenum.Dnsenum()
+            self.ui = Dnsenum()
         elif (text == Tools.GPP_DECRYPT.name.replace("_", "-")):
             self.ui = GppDecrypt.GppDecrypt()
         elif (text == Tools.HASH_IDENTIFIER.name.replace("_", "-")):
