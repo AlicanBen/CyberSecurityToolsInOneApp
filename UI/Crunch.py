@@ -1,12 +1,15 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
     QHBoxLayout, QCheckBox, QScrollArea, QRadioButton
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class Crunch:
-
+    __command=[]
+    __checkedRB=None
     def __init__(self):
 
         super().__init__()
@@ -73,52 +76,52 @@ class Crunch:
         vs=QVBoxLayout()
         self.numeric = QRadioButton("numeric")
         self.numeric.setChecked(False)
-        self.numeric.toggled.connect(lambda: self.btnstate(self.b1))
+        self.numeric.toggled.connect(lambda: self.radioBtnHandler(self.numeric))
         vs.addWidget(self.numeric)
 
         self.ualpha = QRadioButton("ualpha")
         self.ualpha.setChecked(False)
-        self.ualpha.toggled.connect(lambda: self.btnstate(self.b1))
+        self.ualpha.toggled.connect(lambda: self.radioBtnHandler(self.ualpha))
         vs.addWidget(self.ualpha)
 
         self.ualpha_numeric = QRadioButton("ualpha_numeric")
         self.ualpha_numeric.setChecked(False)
-        self.ualpha_numeric.toggled.connect(lambda: self.btnstate(self.b1))
+        self.ualpha_numeric.toggled.connect(lambda: self.radioBtnHandler(self.ualpha_numeric))
         vs.addWidget(self.ualpha_numeric)
 
         self.ualpha_numeric_all = QRadioButton("ualpha_numeric_all")
         self.ualpha_numeric_all.setChecked(False)
-        self.ualpha_numeric_all.toggled.connect(lambda: self.btnstate(self.b1))
+        self.ualpha_numeric_all.toggled.connect(lambda: self.radioBtnHandler(self.ualpha_numeric_all))
         vs.addWidget(self.ualpha_numeric_all)
 
         self.lalpha = QRadioButton("lalpha")
         self.lalpha.setChecked(False)
-        self.lalpha.toggled.connect(lambda: self.btnstate(self.b1))
+        self.lalpha.toggled.connect(lambda: self.radioBtnHandler(self.lalpha))
         vs.addWidget(self.lalpha)
 
         self.lalpha_numeric = QRadioButton("lalpha_numeric")
         self.lalpha_numeric.setChecked(False)
-        self.lalpha_numeric.toggled.connect(lambda: self.btnstate(self.b1))
+        self.lalpha_numeric.toggled.connect(lambda: self.radioBtnHandler(self.lalpha_numeric))
         vs.addWidget(self.lalpha_numeric)
 
         self.lalpha_numeric_all = QRadioButton("lalpha_numeric_all")
         self.lalpha_numeric_all.setChecked(False)
-        self.lalpha_numeric_all.toggled.connect(lambda: self.btnstate(self.b1))
+        self.lalpha_numeric_all.toggled.connect(lambda: self.radioBtnHandler(self.lalpha_numeric_all))
         vs.addWidget(self.lalpha_numeric_all)
 
         self.mixalpha = QRadioButton("mixalpha")
         self.mixalpha.setChecked(False)
-        self.mixalpha.toggled.connect(lambda: self.btnstate(self.b1))
+        self.mixalpha.toggled.connect(lambda: self.radioBtnHandler(self.mixalpha))
         vs.addWidget(self.mixalpha)
 
         self.mixalpha_numeric = QRadioButton("mixalpha_numeric")
         self.mixalpha_numeric.setChecked(False)
-        self.mixalpha_numeric.toggled.connect(lambda: self.btnstate(self.b1))
+        self.mixalpha_numeric.toggled.connect(lambda: self.radioBtnHandler(self.mixalpha_numeric))
         vs.addWidget(self.mixalpha_numeric)
 
         self.mixalpha_numeric_all = QRadioButton("mixalpha_numeric_all")
         self.mixalpha_numeric_all.setChecked(False)
-        self.mixalpha_numeric_all.toggled.connect(lambda: self.btnstate(self.b1))
+        self.mixalpha_numeric_all.toggled.connect(lambda: self.radioBtnHandler(self.mixalpha_numeric_all))
         vs.addWidget(self.mixalpha_numeric_all)
         gboxs=QGroupBox()
 
@@ -141,7 +144,9 @@ class Crunch:
         vs = QHBoxLayout()
 
         self.create=QPushButton("Create List")
+        self.create.clicked.connect(lambda:self.runButtonClick())
         self.cancel=QPushButton("Cancel")
+        self.cancel.clicked.connect(lambda:self.returnHome())
         vs.addWidget(self.cancel)
         vs.addWidget(self.create)
         ngbox=QGroupBox()
@@ -209,6 +214,32 @@ class Crunch:
         report.addAction("Delete")
         bar.addAction("About Us")
 
+    def returnHome(self):
+        self.ui = Home.Home()
+        self.ui.createWindow()
+        self.ui.showWindow()
+        self.win.close()
+
+    def runButtonClick(self):
+        self.__command.append(self.enrty_min_length.text())
+        self.__command.append(self.enrty_max_length.text())
+        if(self.checkBox.isChecked()):
+            self.__command.append("/usr/share/crunch/charset.lst")
+            self.__command.append(self.__checkedRB)
+        elif(not(self.checkBox.isChecked()) and self.charsetEdit!=""):
+            self.__command.append(self.charsetEdit.text())
+        if(self.outputfileEdit.text()!=""):
+            self.__command.append("-o")
+            self.__command.append(self.outputfileEdit.text())
+        print(self.__command)
+        cexec=CommandExecuter("crunch",self.__command)
+        cexec.run()
+        result=cexec.getResult()
+        print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
+        self.__command.clear()
+
+
     def buttonClickHandler(self, text):
         self.window = QWidget()
         self.ui = None;
@@ -252,6 +283,13 @@ class Crunch:
     def __del__(self):
         print("asd")
         self.win.destroy()
+
+    def radioBtnHandler(self,radiobutton):
+        if(radiobutton.isChecked()):
+            self.__checkedRB=radiobutton.text()
+
+
+
 
     def checkBoxController(self,checkBox):
         if (checkBox.isChecked()):
