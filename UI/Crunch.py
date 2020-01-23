@@ -25,6 +25,7 @@ class Crunch:
         hbox = QVBoxLayout()
         hbox.addLayout(self.top_lvl_vBox)
         wid.setLayout(hbox)
+
     def showWindow(self):
         self.win.show()
 
@@ -224,12 +225,13 @@ class Crunch:
         self.__command.append(self.enrty_min_length.text())
         self.__command.append(self.enrty_max_length.text())
         if(self.checkBox.isChecked()):
+            self.__command.append("-f")
             self.__command.append("/usr/share/crunch/charset.lst")
             self.__command.append(self.__checkedRB)
         elif(not(self.checkBox.isChecked()) and self.charsetEdit!=""):
             self.__command.append(self.charsetEdit.text())
         if(self.outputfileEdit.text()!=""):
-            self.__command.append("-o")
+            self.__command.append("-o ")
             self.__command.append(self.outputfileEdit.text())
         print(self.__command)
         cexec=CommandExecuter("crunch",self.__command)
@@ -288,9 +290,6 @@ class Crunch:
         if(radiobutton.isChecked()):
             self.__checkedRB=radiobutton.text()
 
-
-
-
     def checkBoxController(self,checkBox):
         if (checkBox.isChecked()):
             self.scrollArea.setVisible(True)
@@ -300,5 +299,3 @@ class Crunch:
             self.scrollArea.setVisible(False)
             self.gbox3.setVisible(True)
             self.win.setFixedHeight(400)
-
-

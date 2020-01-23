@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QLabel, \
     QRadioButton
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class Hping3:
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -33,21 +36,36 @@ class Hping3:
         self.mode_rawIp = QRadioButton("RAW IP mode")
         self.mode_ICMP = QRadioButton("ICMP mode")
         self.mode_UDP = QRadioButton("UDP mode")
-        self.mode_SCAN = QRadioButton("SCAN mode")
 
         g_vBox.addWidget(self.mode_rawIp)
         g_vBox.addWidget(self.mode_ICMP)
         g_vBox.addWidget(self.mode_UDP)
-        g_vBox.addWidget(self.mode_SCAN)
         gbox.setLayout(g_vBox)
 
         self.searchButton = QPushButton("Identify")
+        self.searchButton.clicked.connect(lambda :self.buttonHandler())
 
         self.vBox.addWidget(lbl_url)
         self.vBox.addWidget(self.url_edit)
         self.vBox.addWidget(gbox)
         self.vBox.addWidget(self.searchButton)
 
+    def buttonHandler(self):
+        if(self.mode_rawIp.isChecked()):
+            self.__command.insert(0,"--rawip")
+        elif(self.mode_ICMP.isChecked()):
+            self.__command.insert(0,"--icmp")
+        elif(self.mode_UDP.isChecked()):
+            self.__command.insert(0,"--udp")
+        self.__command.append(self.url_edit.text())
+        print(self.__command)
+        cexec = CommandExecuter("hping3", self.__command)
+        cexec.Popen()
+        res=cexec.getResult()
+
+        print(res.communicate())
+
+        self.__command.clear()
     def createMenu(self):
         bar = self.win.menuBar()
 

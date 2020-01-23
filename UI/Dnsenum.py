@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, QCheckBox
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 
 class Dnsenum:
+    __command=[]
 
     def __init__(self):
 
@@ -42,25 +45,26 @@ class Dnsenum:
         self.vBox.addWidget(self.optionsGBox)
 
         self.startButton=QPushButton("Enumerate")
+        self.startButton.clicked.connect(lambda :self.buttonHandler())
         self.vBox.addWidget(self.startButton)
 
     def options(self):
         self.optionsGBox=QGroupBox("Options");
         vBox=QVBoxLayout()
 
-        skip_reverse_lookup = QCheckBox()
-        threads = QCheckBox()
-        all_progress = QCheckBox()
+        self.skip_reverse_lookup = QCheckBox()
+        self.threads = QCheckBox()
+        self.all_progress = QCheckBox()
 
 
-        skip_reverse_lookup.setText("Skip the reverse lookup operations.")
-        threads.setText("The number of threads that will perform different queries.")
-        all_progress.setText("Show all the progress and all the error messages.")
+        self.skip_reverse_lookup.setText("Skip the reverse lookup operations.")
+        self.threads.setText("The number of threads that will perform different queries.")
+        self.all_progress.setText("Show all the progress and all the error messages.")
 
 
-        vBox.addWidget(skip_reverse_lookup)
-        vBox.addWidget(threads)
-        vBox.addWidget(all_progress)
+        vBox.addWidget(self.skip_reverse_lookup)
+        vBox.addWidget(self.threads)
+        vBox.addWidget(self.all_progress)
 
         self.optionsGBox.setLayout(vBox)
 
@@ -177,6 +181,30 @@ class Dnsenum:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def buttonHandler(self):
+
+        if (self.optionUse.isChecked()):
+            if (self.skip_reverse_lookup.isChecked()):
+               self.__command.append("--noreverse")
+            if (self.threads.isChecked()):
+               self.__command.append("--threads")
+               self.__command.append("100")
+            if (self.all_progress.isChecked()):
+               self.__command.append("--verbose")
+
+        if (self.outputFileedit.text() != ""):
+            self.__command.append("-o")
+            self.__command.append(self.outputFileedit.text())
+        self.__command.append(self.urlEdit.text())
+
+        print(self.__command)
+        cexec = CommandExecuter("dnsenum", self.__command)
+        cexec.run()
+        result = cexec.getResult()
+        print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
+        self.__command.clear()
 
     def __del__(self):
         self.win.close()

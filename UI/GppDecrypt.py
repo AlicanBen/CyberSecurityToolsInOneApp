@@ -1,10 +1,12 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLineEdit, QCheckBox,QHBoxLayout
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class GppDecrypt:
-
+    __command=[]
     def __init__(self):
 
         super().__init__()
@@ -28,6 +30,7 @@ class GppDecrypt:
         hbox = QHBoxLayout()
         self.searchEdit = QLineEdit()
         self.searchButton = QPushButton("Decrypt")
+        self.searchButton.clicked.connect(lambda :self.buttonHandler())
         hbox.addWidget(self.searchEdit)
         hbox.addWidget(self.searchButton)
         gbox.setLayout(hbox)
@@ -133,6 +136,17 @@ class GppDecrypt:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def buttonHandler(self):
+        self.__command.append(self.searchEdit.text())
+        print(self.__command)
+        cexec = CommandExecuter("gpp-decrypt", self.__command)
+        cexec.run()
+        result = cexec.getResult()
+        print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
+        self.__command.clear()
+
 
     def __del__(self):
         self.win.close()

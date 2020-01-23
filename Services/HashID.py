@@ -6,7 +6,7 @@
 # Root@Blackploit.com
 
 class HashID:
-    logo = '''   #########################################################################
+    logo = '''       #########################################################################
        #     __  __                     __           ______    _____           #
        #    /\ \/\ \                   /\ \         /\__  _\  /\  _ `\         #
        #    \ \ \_\ \     __      ____ \ \ \___     \/_/\ \/  \ \ \/\ \        #
@@ -986,10 +986,10 @@ class HashID:
             self.jerar.sort()
             ret.append("Possible Hashs:")
             ret.append(  "[+] "+ self.algorithms[self.jerar[0]])
-            ret.append("[+] ", self.algorithms[self.jerar[1]])
+            ret.append("[+] "+self.algorithms[self.jerar[1]])
             ret.append("Least Possible Hashs:")
             for a in range(int(len(self.jerar)) - 2):
-                ret.append("[+] ", self.algorithms[self.jerar[a + 2]])
+                ret.append("[+] "+ self.algorithms[self.jerar[a + 2]])
 
         else:
             self.jerar.sort()
@@ -997,3 +997,9 @@ class HashID:
             for a in range(len(self.jerar)):
                 ret.append("[+] ", self.algorithms[self.jerar[a]])
         return ret
+
+
+if __name__ == '__main__':
+    hash=HashID("098f6bcd4621d373cade4e832627b4f6")
+    for i in hash.exec():
+        print(i)

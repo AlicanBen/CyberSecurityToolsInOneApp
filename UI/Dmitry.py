@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit,QCheckBox
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 
 class Dmitry:
+    __command=[]
 
     def __init__(self):
 
@@ -42,32 +45,33 @@ class Dmitry:
         self.vBox.addWidget(self.optionsGBox)
 
         self.startButton=QPushButton("Start")
+        self.startButton.clicked.connect(lambda :self.buttonHandler())
         self.vBox.addWidget(self.startButton)
 
     def options(self):
         self.optionsGBox=QGroupBox("Options");
         vBox=QVBoxLayout()
 
-        whois_IP = QCheckBox()
-        whois_Domain = QCheckBox()
-        netCraft_info = QCheckBox()
-        possible_subDomains = QCheckBox()
-        possible_eMails = QCheckBox()
-        tcp_port_scan = QCheckBox()
+        self.whois_IP = QCheckBox()
+        self.whois_Domain = QCheckBox()
+        self.netCraft_info = QCheckBox()
+        self.possible_subDomains = QCheckBox()
+        self.possible_eMails = QCheckBox()
+        self.tcp_port_scan = QCheckBox()
 
-        whois_IP.setText("Whois lookup on the IP address of a host")
-        whois_Domain.setText("Whois lookup on the domain name of a host ")
-        netCraft_info.setText("Netcraft.com information on a host")
-        possible_subDomains.setText("Search for possible subdomains")
-        possible_eMails.setText("Search for possible email addresses")
-        tcp_port_scan.setText("TCP port scan on a host")
+        self.whois_IP.setText("Whois lookup on the IP address of a host")
+        self.whois_Domain.setText("Whois lookup on the domain name of a host ")
+        self.netCraft_info.setText("Netcraft.com information on a host")
+        self.possible_subDomains.setText("Search for possible subdomains")
+        self.possible_eMails.setText("Search for possible email addresses")
+        self.tcp_port_scan.setText("TCP port scan on a host")
 
-        vBox.addWidget(whois_IP)
-        vBox.addWidget(whois_Domain)
-        vBox.addWidget(netCraft_info)
-        vBox.addWidget(possible_subDomains)
-        vBox.addWidget(possible_eMails)
-        vBox.addWidget(tcp_port_scan)
+        vBox.addWidget(self.whois_IP)
+        vBox.addWidget(self.whois_Domain)
+        vBox.addWidget(self.netCraft_info)
+        vBox.addWidget(self.possible_subDomains)
+        vBox.addWidget(self.possible_eMails)
+        vBox.addWidget(self.tcp_port_scan)
         self.optionsGBox.setLayout(vBox)
 
     def optionsController(self, checkBox):
@@ -79,8 +83,6 @@ class Dmitry:
         else:
             self.optionsGBox.setVisible(False)
             self.win.setFixedHeight(200)
-
-
 
     def createMenu(self):
         bar = self.win.menuBar()
@@ -181,6 +183,37 @@ class Dmitry:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def buttonHandler(self):
+        str=""
+        if(self.optionUse.isChecked()):
+            if(self.whois_IP.isChecked()):
+                str+="i"
+            if(self.whois_Domain.isChecked()):
+                str += "w"
+            if(self.netCraft_info.isChecked()):
+                str += "n"
+            if(self.possible_subDomains .isChecked()):
+                str+="s"
+            if(self.possible_eMails .isChecked()):
+                str+="e"
+            if(self.tcp_port_scan .isChecked()):
+                str+="p"
+            self.__command.append("-"+str)
+        str=""
+
+        if (self.outputFileedit.text() != ""):
+            self.__command.append("-o")
+            self.__command.append(self.outputFileedit.text())
+        self.__command.append(self.urlEdit.text())
+
+        print(self.__command)
+        cexec = CommandExecuter("dmitry", self.__command)
+        cexec.run()
+        result = cexec.getResult()
+        print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
+        self.__command.clear()
 
     def __del__(self):
         self.win.close()

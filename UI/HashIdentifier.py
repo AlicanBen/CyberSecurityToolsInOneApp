@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QMainWindow, QWidget
 
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 
 class HashIdentifier:
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -28,6 +30,7 @@ class HashIdentifier:
         hbox = QHBoxLayout()
         self.searchEdit = QLineEdit()
         self.searchButton = QPushButton("Identify")
+        self.searchButton.clicked.connect(lambda :self.buttonHandler())
         hbox.addWidget(self.searchEdit)
         hbox.addWidget(self.searchButton)
         gbox.setLayout(hbox)
@@ -132,6 +135,16 @@ class HashIdentifier:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def buttonHandler(self):
+        self.__command.append(self.searchEdit.text())
+        print(self.__command)
+        cexec = CommandExecuter("hash-identifier", self.__command)
+        cexec.run()
+        result = cexec.getResult()
+        for i in result:
+            print(i)
+        self.__command.clear()
 
     def __del__(self):
         self.win.close()

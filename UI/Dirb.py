@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
     QHBoxLayout,QFileDialog
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 
 
@@ -7,7 +9,7 @@ from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashca
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class Dirb:
-
+    __command=[]
     def __init__(self):
 
         super().__init__()
@@ -36,6 +38,7 @@ class Dirb:
         self.outputFileedit = QLineEdit()
         self.vBox.addWidget(self.outputFileedit)
         self.startButton=QPushButton("Start")
+        self.startButton.clicked.connect(lambda:self.runButtonClick())
         self.vBox.addWidget(self.startButton)
 
     def fileDialog(self):
@@ -51,8 +54,9 @@ class Dirb:
 
     def open_dialog_box(self):
         filedesc = QFileDialog.getOpenFileName()
-        path = filedesc[0]
-        fileName=path.split("/")
+        self.filePath = filedesc[0]
+        print(self.filePath)
+        fileName=self.filePath.split("/")
         self.fileLabel.setText(fileName[-1])
 
 
@@ -159,6 +163,21 @@ class Dirb:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def runButtonClick(self):
+        self.__command.append(self.urlEdit.text())
+        self.__command.append(self.filePath)
+        if (self.outputFileedit.text() != ""):
+            self.__command.append("-o")
+            self.__command.append(self.outputFileedit.text())
+        print(self.__command)
+        cexec = CommandExecuter("dirb", self.__command)
+        cexec.run()
+        result = cexec.getResult()
+        print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
+        self.__command.clear()
+
 
     def __del__(self):
         self.win.close()
