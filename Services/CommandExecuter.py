@@ -27,7 +27,7 @@ class CommandExecuter:
             self.hashId = HashID(self.__command[1])
             self.__result=self.hashId.exec()
         else:
-            self.__proccesedVal =subprocess.call(self.__command,stdout=True)
+            self.__proccesedVal =subprocess.Popen(self.__command)
         return True
 
     def getResult(self):

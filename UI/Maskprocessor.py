@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QPushButton,  QVBoxLayout, QGroupBox, QLabel, QLineEdit, QMainWindow, QWidget
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 
 class Maskprocessor:
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -45,6 +48,7 @@ class Maskprocessor:
         gbox.setLayout(g_vBox)
 
         self.createButton = QPushButton("Create List")
+        self.createButton.clicked.connect(lambda :self.buttonHandler())
 
         self.vBox.addWidget(lbl_password)
         self.vBox.addWidget(self.password_edit)
@@ -113,6 +117,19 @@ class Maskprocessor:
         report.addAction("Delete")
         bar.addAction("About Us")
 
+    def buttonHandler(self):
+        self.__command.append(self.password_edit.text())
+        if(self.file_name_edit.text()!=""):
+            self.__command.append("-o")
+            self.__command.append(self.file_name_edit.text())
+        print(self.__command)
+        cexec = CommandExecuter("mp64", self.__command)
+        cexec.run()
+        res = cexec.getResult()
+
+        print(res.stdout.decode("utf-8"))
+
+        self.__command.clear()
     def buttonClickHandler(self, text):
         self.window = QWidget()
         self.ui = None;

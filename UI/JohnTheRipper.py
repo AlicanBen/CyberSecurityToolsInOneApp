@@ -1,16 +1,21 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QGroupBox, QRadioButton, QPushButton, \
     QHBoxLayout, QFileDialog
+
+from Services import CommandExecuter
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 from Utils.Tools import Tools
 
 
 class JohnTheRipper:
+    __command=[]
 
     def __init__(self):
         super().__init__()
 
     def createWindow(self):
+        self.passFileDirectory = ""
+        self.listDirectory = ""
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
         self.win.setWindowTitle("John The Ripper")
@@ -25,28 +30,38 @@ class JohnTheRipper:
 
     def form(self):
         self.vBox=QVBoxLayout()
-        self.fileDialog()
-        self.vBox.addWidget(self.fileGBox)
+        self.listGBox = self.fileDialog("List")
+        self.vBox.addWidget(self.listGBox)
+        self.passfileGBox= self.fileDialog("Password File")
+        self.vBox.addWidget(self.passfileGBox)
         self.startButton=QPushButton("Decrypt")
+        self.startButton.clicked.connect(lambda : self.buttonHandler())
         self.vBox.addWidget(self.startButton)
 
-    def fileDialog(self):
-        self.fileGBox=QGroupBox("Directory List")
+    def fileDialog(self,title):
+        fileGBox=QGroupBox(title)
         fileHbox=QHBoxLayout()
-        self.fileButton=QPushButton("Select File")
-        self.fileButton.clicked.connect(self.pushButton_handler)
-        fileHbox.addWidget(self.fileButton)
-        self.fileGBox.setLayout(fileHbox)
+        fileButton=QPushButton("Select File")
+        fileButton.clicked.connect(lambda :self.open_dialog_box(fileButton,title))
+        fileHbox.addWidget(fileButton)
+        fileGBox.setLayout(fileHbox)
+        return fileGBox
 
-    def open_dialog_box(self):
+    def open_dialog_box(self,fileButton,title):
+
+
         filedesc = QFileDialog.getOpenFileName()
         path = filedesc[0]
-        fileName=path.split("/")
-        self.fileButton.setText(fileName[-1])
-
-    def pushButton_handler(self):
-        print("Button pressed")
-        self.open_dialog_box()
+        fileName = path.split("/")
+        fileButton.setText(fileName[-1])
+        if(title=="List"):
+            self.listDirectory = path
+            print("list:", self.listDirectory)
+        elif(title=="Password File"):
+            self.passFileDirectory=path
+            print("Password File:", self.passFileDirectory)
+        print("list:", self.listDirectory)
+        print("Password File:", self.passFileDirectory)
 
     def createMenu(self):
         bar = self.win.menuBar()
@@ -147,6 +162,19 @@ class JohnTheRipper:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+    def buttonHandler(self):
+        self.__command.append("--wordlist="+self.listDirectory)
+        self.__command.append("--rules")
+        self.__command.append(self.passFileDirectory)
+        print(self.__command)
+        cexec = CommandExecuter("john", self.__command)
+        cexec.run()
+        res = cexec.getResult()
+
+        print(res.stdout.decode("utf-8"))
+
+        self.__command.clear()
 
     def __del__(self):
         self.win.close()

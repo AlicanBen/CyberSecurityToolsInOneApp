@@ -1,12 +1,14 @@
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QLineEdit, QGroupBox, QMainWindow, QWidget, QComboBox, \
     QCheckBox, QHBoxLayout, QFileDialog
 
+from Services import CommandExecuter
 from Utils.Tools import Tools
 
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class Netdiscover:
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -44,14 +46,11 @@ class Netdiscover:
 
         self.comboBoxGbox.setLayout(vBox)
 
-        lbl_file_name = QLabel("Output File Name")
-        self.file_name_edit = QLineEdit()
 
         self.createButton = QPushButton("Run")
+        self.createButton.clicked.connect(lambda : self.buttonHandler())
         self.vBox.addWidget(self.range_comboBox)
         self.vBox.addWidget(self.comboBoxGbox)
-        self.vBox.addWidget(lbl_file_name)
-        self.vBox.addWidget(self.file_name_edit)
         self.options()
         self.vBox.addWidget(self.createButton)
 
@@ -210,7 +209,7 @@ class Netdiscover:
         self.fileGBox=QGroupBox("List Of Range File")
         fileHbox=QHBoxLayout()
         self.fileButton=QPushButton("Select File")
-        self.fileButton.clicked.connect(self.pushButton_handler)
+        self.fileButton.clicked.connect(lambda :self.open_dialog_box())
         fileHbox.addWidget(self.fileButton)
         self.fileGBox.setLayout(fileHbox)
 
@@ -223,14 +222,11 @@ class Netdiscover:
 
     def open_dialog_box(self):
         filedesc = QFileDialog.getOpenFileName()
-        path = filedesc[0]
-        fileName=path.split("/")
+        self.file_path = filedesc[0]
+        fileName=self.file_path.split("/")
         self.fileButton.setText(fileName[-1])
 
 
-    def pushButton_handler(self):
-        print("Button pressed")
-        self.open_dialog_box()
 
     def comboBoxChange(self):
         if (self.range_comboBox.currentText()=="Select One"):
@@ -243,6 +239,37 @@ class Netdiscover:
             self.comboBoxGbox.setVisible(True)
             self.rangeGBox.setVisible(False)
             self.fileGBox.setVisible(True)
+
+
+    def buttonHandler(self):
+        if(self.range_comboBox.currentText()=="Range"):
+            self.__command.append("-r")
+            self.__command.append(self.range_edit.text())
+        elif(self.range_comboBox.currentText()=="List Of Range File"):
+            self.__command.append("-l")
+            self.__command.append(self.file_path)
+
+        if(self.passive_mode_check.isChecked()):
+            self.__command.append("-p")
+
+        if(self.sleep_time_check.isChecked()):
+            self.__command.append("-s")
+            self.__command.append(self.sleep_time_edit.text())
+
+        if(self.count_of_request.isChecked()):
+            self.__command.append("-c")
+            self.__command.append(self.count_of_request_edit.text())
+
+
+
+        print(self.__command)
+        cexec = CommandExecuter("netdiscover", self.__command)
+        cexec.Popen()
+        res = cexec.getResult()
+
+        print(res.communicate())
+
+        self.__command.clear()
 
     def __del__(self):
         self.win.close()

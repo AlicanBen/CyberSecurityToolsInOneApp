@@ -62,8 +62,9 @@ class Hping3:
         cexec = CommandExecuter("hping3", self.__command)
         cexec.Popen()
         res=cexec.getResult()
+        res.communicate()
 
-        print(res.communicate())
+        print(res.stdout())
 
         self.__command.clear()
     def createMenu(self):
