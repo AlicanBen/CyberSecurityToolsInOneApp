@@ -1,11 +1,14 @@
 from PyQt5.QtWidgets import QPushButton, QLineEdit, QHBoxLayout, QGroupBox, QVBoxLayout, QWidget, QMainWindow, \
     QCheckBox, QLabel, QRadioButton, QScrollArea
+
+from Services import CommandExecuter
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 from Utils.Tools import Tools
 
 
 class Nikto:
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -50,7 +53,7 @@ class Nikto:
 
         vLayout.addWidget(QLabel("Target Host"))
         vLayout.addWidget(self.host)
-        vLayout.addWidget(QLabel("Target Port"))
+        vLayout.addWidget(QLabel("Target Port (Default: 80"))
         vLayout.addWidget(self.port)
         vLayout.addWidget(QLabel("Output File Name"))
         vLayout.addWidget(self.output)
@@ -71,6 +74,7 @@ class Nikto:
         self.tuningCheck = QCheckBox("Scan Tuning")
         self.tuningCheck.toggled.connect(lambda: self.checkboxHandler(self.tuningCheck, self.tuningScrollArea))
         self.runButton= QPushButton("Run")
+        self.runButton.clicked.connect(lambda : self.buttonHandler())
 
         vLayout.addWidget(self.tuningCheck)
         vLayout.addWidget(self.tuningScrollArea)
@@ -178,7 +182,6 @@ class Nikto:
         self.ui.showWindow()
         self.win.close()
 
-
     def outputFormats(self):
         self.outputscrollArea = QScrollArea()
         self.outputscrollArea.setVisible(False)
@@ -191,6 +194,7 @@ class Nikto:
         self.nbe=QRadioButton("Nessus NBE Format (nbe file)")
         self.sqlShema=QRadioButton("Generic SQL Shema")
         self.plainText=QRadioButton("Plain Text")
+        self.xml=QRadioButton("XML Format")
 
         vBox.addWidget(self.csv)
         vBox.addWidget(self.json)
@@ -243,7 +247,9 @@ class Nikto:
         self.authBypass = QCheckBox("Authentication Bypass")
         self.swIdentification = QCheckBox("Software Identification ")
         self.rsInclusion = QCheckBox("Remote Source Inclusion")
+        self.webService = QCheckBox("WebService")
         self.adminConsole = QCheckBox("Administrative Console")
+        self.reverseTO = QCheckBox("Reverse Tuning Options (i.e., include all except specified)")
 
         vBox.addWidget(self.file_upload)
         vBox.addWidget(self.interesting_file)
@@ -258,7 +264,9 @@ class Nikto:
         vBox.addWidget(self.authBypass)
         vBox.addWidget(self.swIdentification)
         vBox.addWidget(self.rsInclusion)
+        vBox.addWidget(self.webService)
         vBox.addWidget(self.adminConsole)
+        vBox.addWidget(self.reverseTO)
 
         tuningGBox.setLayout(vBox)
         self.tuningScrollArea.setWidget(tuningGBox)
@@ -268,6 +276,97 @@ class Nikto:
             groupBox.setVisible(True)
         else:
             groupBox.setVisible(False)
+
+    def buttonHandler(self):
+        self.__command.append("-Display")
+        displaystr = "P"
+        if (self.displayOutput.isChecked()):
+            if(self.redirect.isChecked()):
+                displaystr+="1"
+            if(self.receivedCookies.isChecked()):
+                displaystr+="2"
+            if(self.OKResponse.isChecked()):
+                displaystr+="3"
+            if(self.requreAuthUrl.isChecked()):
+                displaystr+="4"
+            if(self.debugOutput.isChecked()):
+                displaystr+="D"
+            if(self.verbose.isChecked()):
+                displaystr+="V"
+        self.__command.append(displaystr)
+        if(self.output.text()!=""):
+            self.__command.append("-o")
+            self.__command.append("./"+self.output.text())
+
+        if(self.outputFormat.isChecked()):
+            self.__command.append("-Format")
+            if(self.csv.isChecked()):
+                self.__command.append("csv")
+            elif(self.json.isChecked()):
+                self.__command.append("json")
+            elif(self.html.isChecked()):
+                self.__command.append("htm")
+            elif(self.nbe.isChecked()):
+                self.__command.append("nbe")
+            elif(self.sqlShema.isChecked()):
+                self.__command.append("sql")
+            elif(self.plainText.isChecked()):
+                self.__command.append("txt")
+            elif(self.xml.isChecked()):
+                self.__command.append("xml")
+        if(self.dbCheck.isChecked()):
+            self.__command.append("-dbcheck")
+
+        if(self.tuningCheck.isChecked()):
+            tuningstr=""
+            self.__command.append("-Tuning")
+            if (self.file_upload.isChecked()):
+                tuningstr+="0"
+            if (self.interesting_file.isChecked()):
+                tuningstr+="1"
+            if (self.misconfiguration.isChecked()):
+                tuningstr+="2"
+            if (self.disclosure.isChecked()):
+                tuningstr+="3"
+            if (self.injection.isChecked()):
+                tuningstr+="4"
+            if (self.rfRetrieval_in_web_root.isChecked()):
+                tuningstr+="5"
+            if (self.dos.isChecked()):
+                tuningstr+="6"
+            if (self.rfRetrieval_server_wide.isChecked()):
+                tuningstr+="7"
+            if (self.remote_shell.isChecked()):
+                tuningstr+="8"
+            if (self.sqlInjection.isChecked()):
+                tuningstr+="9"
+            if (self.authBypass.isChecked()):
+                tuningstr+="a"
+            if (self.swIdentification.isChecked()):
+                tuningstr+="b"
+            if (self.rsInclusion.isChecked()):
+                tuningstr+="c"
+            if (self.webService.isChecked()):
+                tuningstr+="d"
+            if (self.adminConsole.isChecked()):
+                tuningstr+="e"
+            if (self.reverseTO.isChecked()):
+                tuningstr+="x"
+            self.__command.append(tuningstr)
+        self.__command.append("-host")
+        self.__command.append(self.host.text())
+
+        if(self.port.text()!=""):
+            self.__command.append("-port")
+            self.__command.append(self.port.text())
+        print(self.__command)
+        cexec = CommandExecuter("nikto", self.__command)
+        cexec.Popen()
+        res = cexec.getResult()
+
+
+        self.__command.clear()
+
 
     def __del__(self):
         self.win.close()

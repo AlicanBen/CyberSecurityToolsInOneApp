@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLineEdit, QCheckBox,QHBoxLayout
+
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 
 class Searchploit:
-
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -28,12 +30,15 @@ class Searchploit:
         hbox = QHBoxLayout()
         self.searchEdit = QLineEdit()
         self.searchButton = QPushButton("Search")
+        self.searchButton.clicked.connect(lambda : self.buttonHandler())
         hbox.addWidget(self.searchEdit)
         hbox.addWidget(self.searchButton)
         gbox.setLayout(hbox)
         self.vBox.addWidget(gbox)
         self.case_sensitive=QCheckBox("Case Sensitive")
         self.vBox.addWidget(self.case_sensitive)
+        self.json=QCheckBox("Show result in JSON format")
+        self.vBox.addWidget(self.json)
 
     def createMenu(self):
         bar = self.win.menuBar()
@@ -135,5 +140,17 @@ class Searchploit:
         self.ui.showWindow()
         self.win.close()
 
-    def __del__(self):
-        self.win.close()
+    def buttonHandler(self):
+        self.__command.append(self.searchEdit.text())
+        if(self.case_sensitive.isChecked()):
+            self.__command.append("-c")
+        if(self.json.isChecked()):
+            self.__command.append("-j")
+        print(self.__command)
+        cexec = CommandExecuter("searchsploit", self.__command)
+        cexec.Popen()
+        res = cexec.getResult()
+
+
+        self.__command.clear()
+
