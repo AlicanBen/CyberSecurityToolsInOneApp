@@ -226,8 +226,6 @@ class Netdiscover:
         fileName=self.file_path.split("/")
         self.fileButton.setText(fileName[-1])
 
-
-
     def comboBoxChange(self):
         if (self.range_comboBox.currentText()=="Select One"):
             self.comboBoxGbox.setVisible(False)
@@ -239,7 +237,6 @@ class Netdiscover:
             self.comboBoxGbox.setVisible(True)
             self.rangeGBox.setVisible(False)
             self.fileGBox.setVisible(True)
-
 
     def buttonHandler(self):
         if(self.range_comboBox.currentText()=="Range"):
@@ -259,8 +256,6 @@ class Netdiscover:
         if(self.count_of_request.isChecked()):
             self.__command.append("-c")
             self.__command.append(self.count_of_request_edit.text())
-
-
 
         print(self.__command)
         cexec = CommandExecuter("netdiscover", self.__command)
