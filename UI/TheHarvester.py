@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLineEdit, QLabel, QPushButton, QGroupBox, QHBoxLayout, \
     QFileDialog, QCheckBox, QScrollArea
 
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 class TheHarvester:
+    __command=[]
     def __init__(self):
 
         super().__init__()
@@ -33,9 +35,9 @@ class TheHarvester:
         self.limit = QLineEdit()
         self.vBox.addWidget(self.limit)
 
-        self.vBox.addWidget(QLabel("Start Result Number (Default:0"))
-        self.limit = QLineEdit()
-        self.vBox.addWidget(self.limit)
+        self.vBox.addWidget(QLabel("Start Result Number (Default:0)"))
+        self.start = QLineEdit()
+        self.vBox.addWidget(self.start)
 
 
         self.vBox.addWidget(QLabel("Output File Name"))
@@ -51,6 +53,8 @@ class TheHarvester:
         self.source.toggled.connect(lambda: self.checkboxHandler(self.source, self.sourceScrollArea))
         self.vBox.addWidget(self.sourceScrollArea)
         self.startButton=QPushButton("Run")
+        self.startButton.clicked.connect(lambda : self.buttonHandler())
+
         self.vBox.addWidget(self.startButton)
 
     def sourceScrollArea(self):
@@ -60,36 +64,57 @@ class TheHarvester:
         self.sourceScrollArea.setFixedHeight(100)
         sourceGBox = QGroupBox()
         vBox = QVBoxLayout()
-        self.file_upload = QCheckBox("File Upload")
-        self.interesting_file = QCheckBox("Interesting File / Seen in logs")
-        self.misconfiguration = QCheckBox("Misconfiguration / Default File")
-        self.disclosure = QCheckBox("Information Disclosure ")
-        self.injection = QCheckBox("Injection (XSS/Script/HTML)")
-        self.rfRetrieval_in_web_root = QCheckBox("Remote File Retrieval - Inside Web Root")
-        self.rfRetrieval_in_web_root.setMinimumWidth(300)
-        self.dos = QCheckBox("Denial of Service")
-        self.rfRetrieval_server_wide = QCheckBox("Remote File Retrieval - Server Wide")
-        self.remote_shell = QCheckBox("Command Execution / Remote Shell")
-        self.sqlInjection = QCheckBox("SQL Injection")
-        self.authBypass = QCheckBox("Authentication Bypass")
-        self.swIdentification = QCheckBox("Software Identification ")
-        self.rsInclusion = QCheckBox("Remote Source Inclusion")
-        self.adminConsole = QCheckBox("Administrative Console")
 
-        vBox.addWidget(self.file_upload)
-        vBox.addWidget(self.interesting_file)
-        vBox.addWidget(self.misconfiguration)
-        vBox.addWidget(self.disclosure)
-        vBox.addWidget(self.injection)
-        vBox.addWidget(self.rfRetrieval_in_web_root)
-        vBox.addWidget(self.dos)
-        vBox.addWidget(self.rfRetrieval_server_wide)
-        vBox.addWidget(self.remote_shell)
-        vBox.addWidget(self.sqlInjection)
-        vBox.addWidget(self.authBypass)
-        vBox.addWidget(self.swIdentification)
-        vBox.addWidget(self.rsInclusion)
-        vBox.addWidget(self.adminConsole)
+
+        self.baidu= QCheckBox("Badiu")
+        self.bing= QCheckBox("Bing")
+        self.bingapi= QCheckBox("Bing API")
+        self.certspotter= QCheckBox("Certspotter")
+        self.crtsh= QCheckBox("Crtsh")
+        self.dnsdumpster= QCheckBox("Dnsdumpster")
+        self.dogpile= QCheckBox("Dogpile")
+        self.duckduckgo= QCheckBox("Duckduckgo")
+        self.github_code= QCheckBox("Github Code")
+        self.google= QCheckBox("Google")
+        self.hunter= QCheckBox("Hunter")
+        self.intelx= QCheckBox("IntelX")
+        self.linkedin= QCheckBox("Linked In")
+        self.linkedin_links= QCheckBox("Linked In Links")
+        self.netcraft= QCheckBox("Netcraft")
+        self.otx= QCheckBox("Otx")
+        self.securityTrails= QCheckBox("Securiyt Trails")
+        self.threatcrowd= QCheckBox("Threat Crowd")
+        self.trello= QCheckBox("Trello")
+        self.twitter= QCheckBox("Twitter")
+        self.vhost= QCheckBox("Vhost")
+        self.virustotal= QCheckBox("Virustotal")
+        self.yahoo= QCheckBox("Yahoo")
+        self.all= QCheckBox("All")
+
+        vBox.addWidget(self.baidu)
+        vBox.addWidget(self.bing)
+        vBox.addWidget(self.bingapi)
+        vBox.addWidget(self.certspotter)
+        vBox.addWidget(self.crtsh)
+        vBox.addWidget(self.dnsdumpster)
+        vBox.addWidget(self.dogpile)
+        vBox.addWidget(self.duckduckgo)
+        vBox.addWidget(self.github_code)
+        vBox.addWidget(self.google)
+        vBox.addWidget(self.hunter)
+        vBox.addWidget(self.intelx)
+        vBox.addWidget(self.linkedin)
+        vBox.addWidget(self.linkedin_links)
+        vBox.addWidget(self.netcraft)
+        vBox.addWidget(self.otx)
+        vBox.addWidget(self.securityTrails)
+        vBox.addWidget(self.threatcrowd)
+        vBox.addWidget(self.trello)
+        vBox.addWidget(self.twitter)
+        vBox.addWidget(self.vhost)
+        vBox.addWidget(self.virustotal)
+        vBox.addWidget(self.yahoo)
+        vBox.addWidget(self.all)
 
         sourceGBox.setLayout(vBox)
         self.sourceScrollArea.setWidget(sourceGBox)
@@ -199,6 +224,92 @@ class TheHarvester:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+
+    def buttonHandler(self):
+        if(self.domain.text()!=""):
+            self.__command.append("-d")
+            self.__command.append(self.domain.text())
+
+        if(self.limit.text()==""):
+            self.__command.append("-l")
+            self.__command.append("500")
+        else:
+            self.__command.append("-l")
+            self.__command.append(self.limit.text())
+        if (self.start.text() != ""):
+            self.__command.append("-S")
+            self.__command.append(self.start.text())
+
+        if(self.outputFileedit.text()==""):
+            self.__command.append("-f")
+            self.__command.append("harvesterResult.xml")
+        else:
+            self.__command.append("-f")
+            self.__command.append(self.outputFileedit.text())
+
+        if(self.useShodan.isChecked()):
+            self.__command.append("-s")
+
+        if(self.source.isChecked()):
+            self.__command.append("-b")
+            if(self.baidu.isChecked()):
+                self.__command.append("baidu")
+            if(self.bing.isChecked()):
+                self.__command.append("bing")
+            if(self.bingapi.isChecked()):
+                self.__command.append("bingapi")
+            if(self.certspotter.isChecked()):
+                self.__command.append("certspotter")
+            if(self.crtsh.isChecked()):
+                self.__command.append("crtsh")
+            if(self.dnsdumpster.isChecked()):
+                self.__command.append("dnsdumpster")
+            if(self.dogpile.isChecked()):
+                self.__command.append("dogpile")
+            if(self.duckduckgo.isChecked()):
+                self.__command.append("duckduckgo")
+            if(self.github_code.isChecked()):
+                self.__command.append("github-code")
+            if(self.google.isChecked()):
+                self.__command.append("google")
+            if(self.hunter.isChecked()):
+                self.__command.append("hunter")
+            if(self.intelx.isChecked()):
+                self.__command.append("intelx")
+            if(self.linkedin.isChecked()):
+                self.__command.append("linkedin")
+            if(self.linkedin_links.isChecked()):
+                self.__command.append("linkedin_links")
+            if(self.netcraft.isChecked()):
+                self.__command.append("netcraft")
+            if(self.otx.isChecked()):
+                self.__command.append("otx")
+            if(self.securityTrails.isChecked()):
+                self.__command.append("securityTrails")
+            if(self.threatcrowd.isChecked()):
+                self.__command.append("threatcrowd")
+            if(self.trello.isChecked()):
+                self.__command.append("trello")
+            if(self.twitter.isChecked()):
+                self.__command.append("twitter")
+            if(self.vhost.isChecked()):
+                self.__command.append("vhost")
+            if(self.virustotal.isChecked()):
+                self.__command.append("virustotal")
+            if(self.yahoo.isChecked()):
+                self.__command.append("yahoo")
+            if(self.all.isChecked()):
+                self.__command.append("all")
+
+        print(self.__command)
+        cexec = CommandExecuter("theHarvester", self.__command)
+        cexec.run()
+        res = cexec.getResult()
+        print(res.stdout.decode("utf-8"))
+        print("************************")
+        print(res.stderr.decode("utf-8"))
+        self.__command.clear()
 
     def __del__(self):
         self.win.close()

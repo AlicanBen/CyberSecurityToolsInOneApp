@@ -1,12 +1,14 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QMainWindow, QLabel, \
     QCheckBox, QScrollArea, QRadioButton, QComboBox, QPushButton
 
+from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
 
 
 class Nmap:
+    __command=[]
     def __init__(self):
         super().__init__()
 
@@ -35,6 +37,8 @@ class Nmap:
         self.speedComboBox()
         self.port_range=QLineEdit()
         self.button_scan=QPushButton("Scan")
+        self.button_scan.clicked.connect(lambda : self.buttonHandler())
+
 
         self.vBox.addWidget(QLabel("Scan Range (e.g. 1.1.1.1/24)"))
         self.vBox.addWidget(self.scan_range_edit)
@@ -69,7 +73,7 @@ class Nmap:
         self.scan_TCP_FIN = QCheckBox("TCP FIN Scan")
         self.scan_TCP_xmas = QCheckBox("TCP Xmas Scan")
         self.scan_SCTP_INIT = QCheckBox("SCTP INIT Scan")
-        self.scan_COOKIE_ECHO = QCheckBox("COOKIE-ECHO Xmas Scan")
+        self.scan_COOKIE_ECHO = QCheckBox("COOKIE-ECHO Scan")
 
 
         vBox.addWidget(self.enableOSDetect)
@@ -201,6 +205,75 @@ class Nmap:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
+
+
+    def buttonHandler(self):
+        if(self.enableOSDetect.isChecked()):
+            self.__command.append("-O")
+        if(self.version_info.isChecked()):
+            self.__command.append("-sV")
+        if(self.scan_Udp.isChecked()):
+            self.__command.append("-sU")
+        if(self.scan_TCP_SYN.isChecked()):
+            self.__command.append("-sS")
+        if(self.scan_connect.isChecked()):
+            self.__command.append("-sT")
+        if(self.scan_ACK.isChecked()):
+            self.__command.append("-sA")
+        if(self.scan_window.isChecked()):
+            self.__command.append("-sW")
+        if(self.scan_maimon.isChecked()):
+            self.__command.append("-sM")
+        if(self.scan_TCP_null.isChecked()):
+            self.__command.append("-sN")
+        if(self.scan_TCP_FIN.isChecked()):
+            self.__command.append("-sF")
+        if(self.scan_TCP_xmas.isChecked()):
+            self.__command.append("-sX")
+        if(self.scan_SCTP_INIT.isChecked()):
+            self.__command.append("-sY")
+        if(self.scan_COOKIE_ECHO.isChecked()):
+            self.__command.append("-sZ")
+
+        if(self.combobox.currentText()=="1"):
+            self.__command.append("-T1")
+        elif(self.combobox.currentText()=="2"):
+            self.__command.append("-T2")
+        elif(self.combobox.currentText()=="3"):
+            self.__command.append("-T3")
+        elif(self.combobox.currentText()=="4"):
+            self.__command.append("-T4")
+        elif(self.combobox.currentText()=="5"):
+            self.__command.append("-T5")
+
+        if(self.port_range.text()==""):
+            self.__command.append("-p-")
+
+        else:
+            self.__command.append("-p")
+            self.__command.append( self.port_range.text())
+
+        if(self.type_txt.isChecked()):
+            self.__command.append("-oN")
+            self.__command.append(self.output_file_edit.text())
+        elif(self.type_xml.isChecked()):
+            self.__command.append("-oX")
+            self.__command.append(self.output_file_edit.text())
+        else:
+            self.__command.append("-oX")
+            self.__command.append("nmap.xml")
+
+        self.__command.append(self.scan_range_edit.text())
+        print(self.__command)
+
+        cexec = CommandExecuter("nmap", self.__command)
+        cexec.run()
+        res = cexec.getResult()
+        print(res.stdout.decode("utf-8"))
+
+
+        self.__command.clear()
+
 
     def __del__(self):
         self.win.close()
