@@ -1,5 +1,11 @@
+import qtawesome as qtawesome
+from PyQt5 import QtSvg, Qt, QtCore
+from PyQt5.QtCore import QRect, QUrl
+from PyQt5.QtGui import QPixmap, QPainter, QIcon
+from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
-    QHBoxLayout, QCheckBox, QScrollArea, QRadioButton, QDesktopWidget
+    QHBoxLayout, QCheckBox, QScrollArea, QRadioButton, QDesktopWidget, QGridLayout, QTextBrowser
+from qtpy.QtGui import QDesktopServices
 
 from Services import CommandExecuter
 from Utils.Tools import Tools
@@ -8,7 +14,7 @@ from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashca
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
 
 
-class Crunch:
+class AboutUs:
     __command=[]
     __checkedRB=None
     def __init__(self):
@@ -17,145 +23,109 @@ class Crunch:
 
     def createWindow(self):
         self.win = QMainWindow()
-        self.win.setMinimumWidth(300)
-        self.win.setWindowTitle("Crunch")
-        self.center()
+        self.win.setFixedWidth(700)
+        self.win.setFixedHeight(500)
+        self.win.setWindowTitle("About Us")
+        self.center(self.win)
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
+        wid.setLayout(self.hBox)
         self.createMenu()
-        hbox = QVBoxLayout()
-        hbox.addLayout(self.top_lvl_vBox)
-        wid.setLayout(hbox)
 
+    def center(self,data):
+        frameGm = data.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        frameGm.moveCenter(centerPoint)
+        data.move(frameGm.topLeft())
     def showWindow(self):
         self.win.show()
 
     def form(self):
-        self.top_lvl_vBox=QVBoxLayout()
-        hbox=QHBoxLayout()
+        self.hBox = QHBoxLayout()
+        self.leftSide()
+        self.rightSide()
+        self.hBox.addWidget(self.leftBox)
+        self.hBox.addWidget(self.rightBox)
+
+    def link(self, linkStr):
+
+        QDesktopServices.openUrl(QUrl(linkStr))
+    def leftSide(self):
+        self.leftBox = QGroupBox()
+        self.leftBox.setMinimumWidth(250)
+
+        vLayout = QGridLayout()
+
+        self.leftBox.setStyleSheet("QGroupBox { border-style: none;}")
+
+        b=QLabel()
+        b.setFixedWidth(30)
+        svg=QSvgWidget("assets/engineerBlack.svg")
+        hl=QHBoxLayout()
+        hl.addWidget(svg)
+        hl.setGeometry(QRect(0,0,190,190))
+        box=QGroupBox()
+        box.setStyleSheet("QGroupBox { border-style: none;}")
+        box.setLayout(hl)
+        box.setFixedWidth(190)
+        box.setFixedHeight(190)
+        vLayout.addWidget(b, 0, 0)
+        vLayout.addWidget(b, 0, 2)
+        vLayout.addWidget(box, 0, 1)
+        vLayout.addWidget(b, 1, 0)
+        vLayout.addWidget(b, 1, 2)
+        vLayout.addWidget(b, 2, 0)
+        vLayout.addWidget(b, 2, 2)
+        vLayout.addWidget(b, 3, 0)
+        vLayout.addWidget(b, 3, 2)
+        designer=QLabel("Designer : Ali Can BEN")
+        designer.setStyleSheet("QLabel{font-size:15px;}")
+        designer.setFixedHeight(40)
+        vLayout.addWidget(designer,1,1)
+        github=QLabel()
+        github.setText('<a href="https://github.com/AlicanBen" style="font-size:15px;text-align: center;'
+                       'text-decoration:none; color:black"><img src="assets/github_square.svg" height="25" width="25"/>'
+                       '  Ali Can BEN</a>')
+        github.linkActivated.connect(self.link)
+        github.setFixedHeight(30)
+        vLayout.addWidget(github,2,1)
+        linkedin=QLabel()
+        linkedin.setText('<a href="https://www.linkedin.com/in/ali-can-ben-22929b151/" style="font-size:15px;'
+                         'text-align: center; text-decoration:none; color:black"><img src="assets/linkedin.svg" '
+                         'height="25" width="25"/>  Ali Can BEN</a>')
+        linkedin.linkActivated.connect(self.link)
+        linkedin.setFixedHeight(30)
+        vLayout.addWidget(linkedin,3,1)
+        self.leftBox.setLayout(vLayout)
 
 
-        lbl_min_length= QLabel("Minumum Length")
-        self.enrty_min_length= QLineEdit(self.win)
-        self.enrty_min_length.setPlaceholderText("Minumum Length")
-        v1=QVBoxLayout()
-        v1.addWidget(lbl_min_length)
-        v1.addWidget(self.enrty_min_length)
-        hbox.addLayout(v1)
+    def rightSide(self):
+        self.rightBox = QGroupBox()
+        self.rightBox.setMinimumWidth(300)
+        self.rightBox.setObjectName("ColoredGroupBox")
+        self.rightBox.setStyleSheet("QGroupBox#ColoredGroupBox { border: 1px solid black;}")
+        self.rightBox.setTitle("GNU General Public Licance")
+        vLayout = QVBoxLayout()
+        lbl=QLabel()
+        lbl.setFixedWidth(250)
+        lbl.setText('ToolPack Version 1.1.12\n\nThis program is free software; you can redistribute it and/or modify it '
+                    'under the terms of the GNU General Public License as published by the Free Software Foundation;'
+                    ' either version 2 of the License, or (at your option) any later version.\n\nThis program is '
+                    'distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the '
+                    'implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General '
+                    'Public License for more details.\n\n You should have received a copy of the GNU General Public '
+                    'License along with this program; if not, write an e-mail to')
+        lbl.setWordWrap(True)
 
-        lbl_max_length= QLabel("Maximum Length")
-        self.enrty_max_length= QLineEdit(self.win)
-        self.enrty_max_length.setPlaceholderText("Maximum Length")
-        v2=QVBoxLayout()
-        v2.addWidget(lbl_max_length)
-        v2.addWidget(self.enrty_max_length)
-        hbox.addLayout(v2)
-        g1=QGroupBox()
-
-        g1.setStyleSheet("QGroupBox { border-style: none;}")
-        g1.setLayout(hbox)
-        self.top_lvl_vBox.addWidget(g1)
-
-        outputfileLabel = QLabel("Output File Name")
-        self.outputfileEdit = QLineEdit(self.win)
-        self.outputfileEdit.setPlaceholderText("Output File Name")
-        v3 = QVBoxLayout()
-        v3.addWidget(outputfileLabel)
-        v3.addWidget(self.outputfileEdit)
-        gbox=QGroupBox()
-        gbox.setStyleSheet("QGroupBox { border-style: none;}")
-
-        gbox.setLayout(v3)
-        self.top_lvl_vBox.addWidget(gbox)
-
-        self.checkBox=QCheckBox("Use Charset")
-        self.checkBox.toggled.connect(lambda : self.checkBoxController(self.checkBox))
-        self.top_lvl_vBox.addWidget(self.checkBox)
-
-        self.scrollArea=QScrollArea()
-        self.scrollArea.setVisible(False)
-        self.scrollArea.setFixedHeight(100)
-        vs=QVBoxLayout()
-        self.numeric = QRadioButton("numeric")
-        self.numeric.setChecked(False)
-        self.numeric.toggled.connect(lambda: self.radioBtnHandler(self.numeric))
-        vs.addWidget(self.numeric)
-
-        self.ualpha = QRadioButton("ualpha")
-        self.ualpha.setChecked(False)
-        self.ualpha.toggled.connect(lambda: self.radioBtnHandler(self.ualpha))
-        vs.addWidget(self.ualpha)
-
-        self.ualpha_numeric = QRadioButton("ualpha_numeric")
-        self.ualpha_numeric.setChecked(False)
-        self.ualpha_numeric.toggled.connect(lambda: self.radioBtnHandler(self.ualpha_numeric))
-        vs.addWidget(self.ualpha_numeric)
-
-        self.ualpha_numeric_all = QRadioButton("ualpha_numeric_all")
-        self.ualpha_numeric_all.setChecked(False)
-        self.ualpha_numeric_all.toggled.connect(lambda: self.radioBtnHandler(self.ualpha_numeric_all))
-        vs.addWidget(self.ualpha_numeric_all)
-
-        self.lalpha = QRadioButton("lalpha")
-        self.lalpha.setChecked(False)
-        self.lalpha.toggled.connect(lambda: self.radioBtnHandler(self.lalpha))
-        vs.addWidget(self.lalpha)
-
-        self.lalpha_numeric = QRadioButton("lalpha_numeric")
-        self.lalpha_numeric.setChecked(False)
-        self.lalpha_numeric.toggled.connect(lambda: self.radioBtnHandler(self.lalpha_numeric))
-        vs.addWidget(self.lalpha_numeric)
-
-        self.lalpha_numeric_all = QRadioButton("lalpha_numeric_all")
-        self.lalpha_numeric_all.setChecked(False)
-        self.lalpha_numeric_all.toggled.connect(lambda: self.radioBtnHandler(self.lalpha_numeric_all))
-        vs.addWidget(self.lalpha_numeric_all)
-
-        self.mixalpha = QRadioButton("mixalpha")
-        self.mixalpha.setChecked(False)
-        self.mixalpha.toggled.connect(lambda: self.radioBtnHandler(self.mixalpha))
-        vs.addWidget(self.mixalpha)
-
-        self.mixalpha_numeric = QRadioButton("mixalpha_numeric")
-        self.mixalpha_numeric.setChecked(False)
-        self.mixalpha_numeric.toggled.connect(lambda: self.radioBtnHandler(self.mixalpha_numeric))
-        vs.addWidget(self.mixalpha_numeric)
-
-        self.mixalpha_numeric_all = QRadioButton("mixalpha_numeric_all")
-        self.mixalpha_numeric_all.setChecked(False)
-        self.mixalpha_numeric_all.toggled.connect(lambda: self.radioBtnHandler(self.mixalpha_numeric_all))
-        vs.addWidget(self.mixalpha_numeric_all)
-        gboxs=QGroupBox()
-
-        gboxs.setStyleSheet("QGroupBox { border-style: none;}")
-        gboxs.setLayout(vs)
-        self.scrollArea.setWidget(gboxs)
-        self.top_lvl_vBox.addWidget(self.scrollArea)
-
-        charsetLbl= QLabel("Charset")
-        self.charsetEdit = QLineEdit(self.win)
-        self.charsetEdit.setPlaceholderText("Charset")
-        v5 = QVBoxLayout()
-        v5.addWidget(charsetLbl)
-        v5.addWidget(self.charsetEdit)
-        self.gbox3 = QGroupBox()
-        self.gbox3.setStyleSheet("QGroupBox { border-style: none;}")
-        self.gbox3.setLayout(v5)
-        self.gbox3.setVisible(False)
-        self.top_lvl_vBox.addWidget(self.gbox3)
-        vs = QHBoxLayout()
-
-        self.create=QPushButton("Create List")
-        self.create.clicked.connect(lambda:self.runButtonClick())
-        self.cancel=QPushButton("Cancel")
-        self.cancel.clicked.connect(lambda:self.returnHome())
-        vs.addWidget(self.cancel)
-        vs.addWidget(self.create)
-        ngbox=QGroupBox()
-        ngbox.setLayout(vs)
-        ngbox.setStyleSheet("QGroupBox { border-style: none;}")
-        self.top_lvl_vBox.addWidget(ngbox)
+        vLayout.addWidget(lbl)
+        mail=QLabel()
+        mail.setText(u'<a href='"'https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&source=mailto&to=alican.ben.97@gmail.com'"''
+                     'style="''text-align: center; text-decoration:none; color:black">Ali Can BEN</a>')
+        mail.setOpenExternalLinks(True)
+        mail.setFixedHeight(30)
+        vLayout.addWidget(mail)
+        self.rightBox.setLayout(vLayout)
 
     def createMenu(self):
         bar = self.win.menuBar()
@@ -281,16 +251,11 @@ class Crunch:
         elif (text == "Home"):
             self.ui = Home.Home()
         elif (text == "About Us"):
-            self.ui = AboutUs.AboutUs()
+            self.ui = AboutUs()
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
 
-    def center(self):
-        frameGm = self.win.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        frameGm.moveCenter(centerPoint)
-        self.win.move(frameGm.topLeft())
     def __del__(self):
         print("asd")
         self.win.destroy()

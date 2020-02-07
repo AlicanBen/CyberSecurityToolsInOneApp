@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QMainWindow, QLabel, \
-    QCheckBox, QScrollArea, QRadioButton, QComboBox, QPushButton
+    QCheckBox, QScrollArea, QRadioButton, QComboBox, QPushButton, QDesktopWidget
 
 from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
 
 
 class Nmap:
@@ -17,11 +17,20 @@ class Nmap:
         self.win.setMinimumWidth(250)
         self.win.setMinimumHeight(400)
         self.win.setWindowTitle("Nmap")
+        self.center()
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
         wid.setLayout(self.vBox)
         self.createMenu()
+
+
+    def center(self):
+        frameGm = self.win.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        frameGm.moveCenter(centerPoint)
+        self.win.move(frameGm.topLeft())
+
 
     def showWindow(self):
         self.win.show()
@@ -164,7 +173,9 @@ class Nmap:
         report.addAction("Create")
         report.addAction("Show")
         report.addAction("Delete")
-        bar.addAction("About Us")
+        self.actionAboutUs = bar.addAction("About Us")
+        self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
+
 
     def buttonClickHandler(self, text):
         self.window = QWidget()
@@ -200,8 +211,9 @@ class Nmap:
         elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):
             self.ui = TheHarvester.TheHarvester()
         elif (text == "Home"):
-            self.win.close()
             self.ui = Home.Home()
+        elif (text == "About Us"):
+            self.ui = AboutUs.AboutUs()
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()

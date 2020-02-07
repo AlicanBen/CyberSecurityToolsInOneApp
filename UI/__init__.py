@@ -14,3 +14,4 @@ from UI.Nikto import Nikto
 from  UI.Nmap import Nmap
 from  UI.TheHarvester import TheHarvester
 from  UI.Hashcat import Hashcat
+from UI.AboutUs import AboutUs

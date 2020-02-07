@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QPushButton, QLineEdit, QHBoxLayout, QGroupBox, QVBoxLayout, QWidget, QMainWindow, \
-    QCheckBox, QLabel, QRadioButton, QScrollArea
+    QCheckBox, QLabel, QRadioButton, QScrollArea, QDesktopWidget
 
 from Services import CommandExecuter
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
 from Utils.Tools import Tools
 
 
@@ -16,11 +16,20 @@ class Nikto:
         self.win = QMainWindow()
         self.win.setMinimumWidth(500)
         self.win.setWindowTitle("Nikto")
+        self.center()
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
         wid.setLayout(self.hBox)
         self.createMenu()
+
+
+    def center(self):
+        frameGm = self.win.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        frameGm.moveCenter(centerPoint)
+        self.win.move(frameGm.topLeft())
+
 
     def showWindow(self):
         self.win.show()
@@ -140,7 +149,9 @@ class Nikto:
         report.addAction("Create")
         report.addAction("Show")
         report.addAction("Delete")
-        bar.addAction("About Us")
+        self.actionAboutUs = bar.addAction("About Us")
+        self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
+
 
     def buttonClickHandler(self, text):
         self.window = QWidget()
@@ -176,8 +187,10 @@ class Nikto:
         elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):
             self.ui = TheHarvester.TheHarvester()
         elif (text == "Home"):
-            self.win.close()
             self.ui = Home.Home()
+        elif (text == "About Us"):
+            self.ui = AboutUs.AboutUs()
+
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()

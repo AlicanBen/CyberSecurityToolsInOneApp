@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QW
 from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester,Home
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+
 
 class GppDecrypt:
     __command=[]
@@ -95,7 +96,8 @@ class GppDecrypt:
         report.addAction("Create")
         report.addAction("Show")
         report.addAction("Delete")
-        bar.addAction("About Us")
+        self.actionAboutUs = bar.addAction("About Us")
+        self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
 
     def buttonClickHandler(self, text):
         self.window = QWidget()
@@ -131,8 +133,9 @@ class GppDecrypt:
         elif (text == Tools.THE_HARVESTER.name.replace("_", " ")):
             self.ui = TheHarvester.TheHarvester()
         elif (text == "Home"):
-            self.win.close()
             self.ui = Home.Home()
+        elif (text == "About Us"):
+            self.ui = AboutUs.AboutUs()
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
