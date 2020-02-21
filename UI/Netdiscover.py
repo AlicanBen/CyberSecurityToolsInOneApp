@@ -274,10 +274,9 @@ class Netdiscover:
         cexec = CommandExecuter("netdiscover", self.__command)
         cexec.Popen()
         res = cexec.getResult()
-
         print(res.communicate())
-
         self.__command.clear()
+        cexec.clear()
 
     def __del__(self):
         self.win.close()

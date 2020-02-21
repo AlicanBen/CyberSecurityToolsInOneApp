@@ -223,6 +223,6 @@ class Dmitry:
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
         self.__command.clear()
-
+        cexec.clear()
     def __del__(self):
         self.win.close()

@@ -376,9 +376,9 @@ class Nikto:
         cexec = CommandExecuter("nikto", self.__command)
         cexec.Popen()
         res = cexec.getResult()
-
-
         self.__command.clear()
+        cexec.clear()
+
 
 
     def __del__(self):

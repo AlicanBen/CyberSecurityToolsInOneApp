@@ -1,9 +1,12 @@
+import functools
+import operator
+
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLineEdit, QCheckBox,QHBoxLayout
 
 from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs, Result
 
 
 class GppDecrypt:
@@ -146,9 +149,12 @@ class GppDecrypt:
         cexec = CommandExecuter("gpp-decrypt", self.__command)
         cexec.run()
         result = cexec.getResult()
-        print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
         self.__command.clear()
+        self.respage=Result.Result(result.stdout.decode("utf-8"))
+        self.respage.createWindow()
+        self.respage.showWindow()
+        cexec.clear()
 
 
     def __del__(self):

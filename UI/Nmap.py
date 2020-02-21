@@ -285,6 +285,7 @@ class Nmap:
 
 
         self.__command.clear()
+        cexec.clear()
 
 
     def __del__(self):

@@ -2,10 +2,10 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QW
     QHBoxLayout, QCheckBox, QScrollArea, QRadioButton, QDesktopWidget
 
 from Services import CommandExecuter
-from Utils.Tools import Tools
 
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+from Utils.Tools import Tools
 
 
 class Crunch:
@@ -243,6 +243,8 @@ class Crunch:
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
         self.__command.clear()
+        cexec.clear()
+
 
 
     def buttonClickHandler(self, text):

@@ -137,8 +137,9 @@ class Maskprocessor:
         cexec = CommandExecuter("mp64", self.__command)
         cexec.run()
         res = cexec.getResult()
-
         print(res.stdout.decode("utf-8"))
+        cexec.clear()
+
 
         self.__command.clear()
     def buttonClickHandler(self, text):

@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QPus
 from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs, Result
 
 
 class HashIdentifier:
@@ -154,9 +154,16 @@ class HashIdentifier:
         cexec = CommandExecuter("hash-identifier", self.__command)
         cexec.run()
         result = cexec.getResult()
+        rst=""
         for i in result:
-            print(i)
+            rst+=i+"\n"
         self.__command.clear()
+
+        self.__command.clear()
+        self.respage = Result.Result(rst)
+        self.respage.createWindow()
+        self.respage.showWindow()
+        cexec.clear()
 
     def __del__(self):
         self.win.close()

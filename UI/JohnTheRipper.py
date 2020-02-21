@@ -182,10 +182,10 @@ class JohnTheRipper:
         cexec = CommandExecuter("john", self.__command)
         cexec.run()
         res = cexec.getResult()
-
         print(res.stdout.decode("utf-8"))
-
         self.__command.clear()
+        cexec.clear()
+
 
     def __del__(self):
         self.win.close()

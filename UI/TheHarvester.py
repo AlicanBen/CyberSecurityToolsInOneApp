@@ -323,6 +323,7 @@ class TheHarvester:
         print("************************")
         print(res.stderr.decode("utf-8"))
         self.__command.clear()
+        cexec.clear()
 
     def __del__(self):
         self.win.close()

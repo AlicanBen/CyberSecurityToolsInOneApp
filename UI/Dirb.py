@@ -6,7 +6,7 @@ from Utils.Tools import Tools
 
 
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs, Result
 
 
 class Dirb:
@@ -186,7 +186,10 @@ class Dirb:
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
         self.__command.clear()
-
+        self.respage=Result.Result(result.stdout.decode("utf-8"))
+        self.respage.createWindow()
+        self.respage.showWindow()
+        cexec.clear()
 
     def __del__(self):
         self.win.close()

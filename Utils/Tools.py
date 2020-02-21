@@ -1,6 +1,5 @@
 from enum import Enum
 
-from UI import *
 
 
 class Tools(Enum):

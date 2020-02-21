@@ -163,6 +163,7 @@ class Searchploit:
         cexec = CommandExecuter("searchsploit", self.__command)
         cexec.Popen()
         res = cexec.getResult()
+        cexec.clear()
 
 
         self.__command.clear()

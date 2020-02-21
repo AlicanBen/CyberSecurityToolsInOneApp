@@ -9,6 +9,7 @@ class CommandExecuter:
     __proccesedVal=None
 
     def __init__(self,command,params):
+        self.__command.clear()
         self.__command.append(command)
         for i in range(len(params)):
             self.__command.append(params[i])
@@ -36,16 +37,12 @@ class CommandExecuter:
         elif(self.__result==None):
             return self.__proccesedVal
 
+
         elif(self.__proccesedVal==None):
             return self.__result
 
-
-
-if __name__ == '__main__':
-    test=CommandExecuter("theHarvester", "-d", "google.com", "-l", "500", "-b", "google")
-    result=test.run()
-    print(result)
-    print("****************")
-    #test.getResult().stdout.decode("utf-8")
-    print(test.getResult().stdout.decode("utf-8"))
-
+    def clear(self):
+        if (self.__result == None):
+            self.__proccesedVal.kill()
+        elif (self.__proccesedVal == None):
+            self.__result= None

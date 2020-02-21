@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, QCheckBox, \
-    QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLineEdit, QCheckBox, \
+    QHBoxLayout, QScrollArea, QLabel
 
 from Services import CommandExecuter
 from Utils.Tools import Tools
@@ -7,89 +7,36 @@ from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashca
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
 
 
-class Dnsenum:
-    __command=[]
-
-    def __init__(self):
-
+class Result:
+    def __init__(self,data):
+        self.__data=data
         super().__init__()
 
     def createWindow(self):
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
-        self.win.setMinimumHeight(200)
-        self.win.setWindowTitle("Dnsenum")
-        self.center()
+        self.win.setWindowTitle("Result")
         self.form()
         wid = QWidget(self.win)
         self.win.setCentralWidget(wid)
         wid.setLayout(self.vBox)
         self.createMenu()
 
-    def center(self):
-        frameGm = self.win.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        frameGm.moveCenter(centerPoint)
-        self.win.move(frameGm.topLeft())
-
     def showWindow(self):
-        self.win.show()
+        self.win.showMaximized()
 
     def form(self):
         self.vBox=QVBoxLayout()
-        self.vBox.addWidget(QLabel("URL/IP"))
-        self.urlEdit=QLineEdit()
-        self.vBox.addWidget(self.urlEdit)
+        self.area=QScrollArea()
 
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.outputFileedit = QLineEdit()
-        self.vBox.addWidget(self.outputFileedit)
-        self.options()
-        self.optionsGBox.setVisible(False)
-        self.optionUse = QCheckBox()
-        self.optionUse.setText("Use Options")
-        self.vBox.addWidget(self.optionUse)
-        self.optionUse.toggled.connect(lambda : self.optionsController(self.optionUse))
-        self.vBox.addWidget(self.optionsGBox)
+        v=QVBoxLayout()
+        self.textbox=QLabel();
+        self.textbox.setWordWrap(True)
 
-        self.startButton=QPushButton("Enumerate")
-        self.startButton.clicked.connect(lambda :self.buttonHandler())
-        self.vBox.addWidget(self.startButton)
-
-    def options(self):
-        self.optionsGBox=QGroupBox("Options");
-        vBox=QVBoxLayout()
-
-        self.skip_reverse_lookup = QCheckBox()
-        self.threads = QCheckBox()
-        self.all_progress = QCheckBox()
-
-
-        self.skip_reverse_lookup.setText("Skip the reverse lookup operations.")
-        self.threads.setText("The number of threads that will perform different queries.")
-        self.all_progress.setText("Show all the progress and all the error messages.")
-
-
-        vBox.addWidget(self.skip_reverse_lookup)
-        vBox.addWidget(self.threads)
-        vBox.addWidget(self.all_progress)
-
-        self.optionsGBox.setLayout(vBox)
-
-    def optionsController(self, checkBox):
-        if (checkBox.isChecked()):
-            self.optionsGBox.setVisible(True)
-            self.win.setMinimumHeight(320)
-            self.win.setMinimumWidth(420)
-
-
-        else:
-            self.optionsGBox.setVisible(False)
-            self.win.setFixedHeight(200)
-            self.win.setFixedWidth(250)
-
-
-
+        self.textbox.setText(self.__data)
+        v.addWidget(self.textbox)
+        self.area.setLayout(v)
+        self.vBox.addWidget(self.area)
     def createMenu(self):
         bar = self.win.menuBar()
 
@@ -151,7 +98,6 @@ class Dnsenum:
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
 
-
     def buttonClickHandler(self, text):
         self.window = QWidget()
         self.ui = None;
@@ -162,9 +108,9 @@ class Dnsenum:
         elif (text == Tools.DMITRY.name):
             self.ui = Dmitry.Dmitry()
         elif (text == Tools.DNSENUM.name):
-            self.ui = Dnsenum()
+            self.ui = Dnsenum.Dnsenum()
         elif (text == Tools.GPP_DECRYPT.name.replace("_", "-")):
-            self.ui = GppDecrypt.GppDecrypt()
+            self.ui = GppDecrypt()
         elif (text == Tools.HASH_IDENTIFIER.name.replace("_", "-")):
             self.ui = HashIdentifier.HashIdentifier()
         elif (text == Tools.HASHCAT.name):
@@ -192,31 +138,6 @@ class Dnsenum:
         self.ui.createWindow()
         self.ui.showWindow()
         self.win.close()
-
-    def buttonHandler(self):
-
-        if (self.optionUse.isChecked()):
-            if (self.skip_reverse_lookup.isChecked()):
-               self.__command.append("--noreverse")
-            if (self.threads.isChecked()):
-               self.__command.append("--threads")
-               self.__command.append("100")
-            if (self.all_progress.isChecked()):
-               self.__command.append("--verbose")
-
-        if (self.outputFileedit.text() != ""):
-            self.__command.append("-o")
-            self.__command.append(self.outputFileedit.text())
-        self.__command.append(self.urlEdit.text())
-
-        print(self.__command)
-        cexec = CommandExecuter("dnsenum", self.__command)
-        cexec.run()
-        result = cexec.getResult()
-        print(result.stderr.decode("utf-8"))
-        print(result.stdout.decode("utf-8"))
-        self.__command.clear()
-        cexec.clear()
 
     def __del__(self):
         self.win.close()
