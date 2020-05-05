@@ -1,7 +1,6 @@
 from enum import Enum
 
 
-
 class Tools(Enum):
     CRUNCH = 0
     DIRB = 1

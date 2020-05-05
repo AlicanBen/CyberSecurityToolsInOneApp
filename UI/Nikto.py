@@ -144,7 +144,7 @@ class Nikto:
         self.actionTheHarvester = tools.addAction(Tools.THE_HARVESTER.name.replace("_", " "))
         self.actionTheHarvester.triggered.connect(lambda: self.buttonClickHandler(self.actionTheHarvester.text()))
 
-        report = bar.addMenu("Report")
+        report = bar.addMenu("Reporting")
 
         report.addAction("Create")
         report.addAction("Show")
