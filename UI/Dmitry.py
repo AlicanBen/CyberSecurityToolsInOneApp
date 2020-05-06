@@ -1,10 +1,14 @@
+import os
+
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, QCheckBox, \
     QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
+from Utils import ReportPositions, FileGenerator
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
-    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+    Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs, Result
 
 
 class Dmitry:
@@ -17,7 +21,7 @@ class Dmitry:
     def createWindow(self):
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
-        self.win.setMinimumHeight(200)
+        self.win.setMinimumHeight(100)
         self.win.setWindowTitle("Dmitry")
         self.center()
         self.form()
@@ -34,10 +38,6 @@ class Dmitry:
         self.vBox.addWidget(QLabel("URL/IP"))
         self.urlEdit=QLineEdit()
         self.vBox.addWidget(self.urlEdit)
-
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.outputFileedit = QLineEdit()
-        self.vBox.addWidget(self.outputFileedit)
         self.options()
         self.optionsGBox.setVisible(False)
         self.optionUse = QCheckBox()
@@ -210,19 +210,26 @@ class Dmitry:
                 str+="p"
             self.__command.append("-"+str)
         str=""
-
-        if (self.outputFileedit.text() != ""):
-            self.__command.append("-o")
-            self.__command.append(self.outputFileedit.text())
+        self.__command.append("-o")
+        self.__command.append("./results/txts/"+ReportPositions.DMITRY.name+".txt")
         self.__command.append(self.urlEdit.text())
 
         print(self.__command)
         cexec = CommandExecuter("dmitry", self.__command)
         cexec.run()
+        r = Report()
+        r.setFileName(ReportPositions.DMITRY.name)
+        fg = FileGenerator()
+        t = fg.generateHtml(ReportPositions.DMITRY.name + ".txt")
+
+        os.remove("./results/txts/" + ReportPositions.DMITRY.name + ".txt")
         result = cexec.getResult()
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
         self.__command.clear()
+        self.respage = Result.Result(result.stdout.decode("utf-8"))
+        self.respage.createWindow()
+        self.respage.showWindow()
         cexec.clear()
     def __del__(self):
         self.win.close()

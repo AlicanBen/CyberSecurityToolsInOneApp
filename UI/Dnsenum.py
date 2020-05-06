@@ -1,7 +1,11 @@
+import os
+
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, QCheckBox, \
     QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
+from Utils import ReportPositions, FileGenerator
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
@@ -17,7 +21,7 @@ class Dnsenum:
     def createWindow(self):
         self.win = QMainWindow()
         self.win.setMinimumWidth(250)
-        self.win.setMinimumHeight(200)
+        self.win.setMinimumHeight(100)
         self.win.setWindowTitle("Dnsenum")
         self.center()
         self.form()
@@ -41,9 +45,6 @@ class Dnsenum:
         self.urlEdit=QLineEdit()
         self.vBox.addWidget(self.urlEdit)
 
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.outputFileedit = QLineEdit()
-        self.vBox.addWidget(self.outputFileedit)
         self.options()
         self.optionsGBox.setVisible(False)
         self.optionUse = QCheckBox()
@@ -204,19 +205,25 @@ class Dnsenum:
             if (self.all_progress.isChecked()):
                self.__command.append("--verbose")
 
-        if (self.outputFileedit.text() != ""):
-            self.__command.append("-o")
-            self.__command.append(self.outputFileedit.text())
+
+        self.__command.append("-o")
+        self.__command.append("./results/xmls/"+ReportPositions.DNSENUM.name+".xml")
         self.__command.append(self.urlEdit.text())
 
         print(self.__command)
         cexec = CommandExecuter("dnsenum", self.__command)
         cexec.run()
         result = cexec.getResult()
+        r = Report()
+        r.setFileName(ReportPositions.DNSENUM.name)
+        fg = FileGenerator()
+        t = fg.generateHtml(ReportPositions.DNSENUM.name + ".xml")
+        os.remove("./results/xmls/" + ReportPositions.DNSENUM.name + ".xml")
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
         self.__command.clear()
         cexec.clear()
+
 
     def __del__(self):
         self.win.close()

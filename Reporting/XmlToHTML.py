@@ -2,8 +2,8 @@ import subprocess
 
 class XmlToHTML:
     __fileName = ""
-    __fileDirectory = "./../results/xmls/"
-    __htmlDirectory = "./../results/htmls/"
+    __fileDirectory = "./results/xmls/"
+    __htmlDirectory = "./results/htmls/"
     __command=["xsltproc", ""]
     def setFileName(self, fileName):
         self.__fileName = fileName

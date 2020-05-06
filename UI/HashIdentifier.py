@@ -1,7 +1,11 @@
+import os
+
 from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QMainWindow, QWidget, \
     QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
+from Utils import ReportPositions, FileGenerator
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs, Result
@@ -157,6 +161,15 @@ class HashIdentifier:
         rst=""
         for i in result:
             rst+=i+"\n"
+
+        with open("./results/txts/HASHIDENTIFIER.txt","w+") as file:
+            file.write(rst)
+        r = Report()
+        r.setFileName(ReportPositions.HASHIDENTIFIER.name)
+        fg = FileGenerator()
+        t = fg.generateHtml(ReportPositions.HASHIDENTIFIER.name + ".txt")
+
+        os.remove("./results/txts/" + ReportPositions.HASHIDENTIFIER.name + ".txt")
         self.__command.clear()
 
         self.__command.clear()

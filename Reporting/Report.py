@@ -1,19 +1,18 @@
 import datetime
-import pathlib
-import subprocess
 import sys
 
 import pdfcrowd
-import pdfkit
+
+from Utils import FileGenerator
 from Utils.ReportPositions import ReportPositions
 class Report:
 
     __files={
-        ReportPositions.NETDISCOVER.name :"NETDISCOVER",
+        ReportPositions.NETDISCOVER.name :"",
         ReportPositions.DNSENUM.name :"",
         ReportPositions.DMITRY.name :"",
         ReportPositions.DIRB.name :"",
-        ReportPositions.NMAP.name :"NMAP",
+        ReportPositions.NMAP.name :"",
         ReportPositions.NIKTO.name :"",
         ReportPositions.SEARCHPLOIT.name :"",
         ReportPositions.HASHIDENTIFIER.name :"",
@@ -21,45 +20,48 @@ class Report:
     }
 
     def setFileName(self,filename):
-        if(filename[:-4] == ReportPositions.NETDISCOVER.name):
+        if(filename == ReportPositions.NETDISCOVER.name):
             self.__files[ReportPositions.NETDISCOVER.name]=ReportPositions.NETDISCOVER.name
 
-        elif(filename[:-4] == ReportPositions.DNSENUM.name):
+        elif(filename == ReportPositions.DNSENUM.name):
             self.__files[ReportPositions.DNSENUM.name]=ReportPositions.DNSENUM.name
 
-        elif(filename[:-4] == ReportPositions.DMITRY.name):
+        elif(filename == ReportPositions.DMITRY.name):
             self.__files[ReportPositions.DMITRY.name]=ReportPositions.DMITRY.name
 
-        elif(filename[:-4] == ReportPositions.DIRB.name):
+        elif(filename == ReportPositions.DIRB.name):
             self.__files[ReportPositions.DIRB.name]=ReportPositions.DIRB.name
 
-        elif(filename[:-4] == ReportPositions.NMAP.name):
+        elif(filename == ReportPositions.NMAP.name):
             self.__files[ReportPositions.NMAP.name]=ReportPositions.NMAP.name
 
-        elif(filename[:-4] == ReportPositions.NIKTO.name):
+        elif(filename == ReportPositions.NIKTO.name):
             self.__files[ReportPositions.NIKTO.name]=ReportPositions.NIKTO.name
 
-        elif(filename[:-4] == ReportPositions.SEARCHPLOIT.name):
+        elif(filename == ReportPositions.SEARCHPLOIT.name):
             self.__files[ReportPositions.SEARCHPLOIT.name]=ReportPositions.SEARCHPLOIT.name
 
-        elif(filename[:-4] == ReportPositions.HASHIDENTIFIER.name):
+        elif(filename == ReportPositions.HASHIDENTIFIER.name):
             self.__files[ReportPositions.HASHIDENTIFIER.name]=ReportPositions.HASHIDENTIFIER.name
 
-        elif(filename[:-4] == ReportPositions.JOHNTHERIPPER.name):
+        elif(filename == ReportPositions.JOHNTHERIPPER.name):
             self.__files[ReportPositions.JOHNTHERIPPER.name]=ReportPositions.JOHNTHERIPPER.name
 
     def getFiles(self):
-        return self.__files()
+        return self.__files
 
     def generateReport(self):
         self.createReportName()
+        diff=[]
+        tmp=0
+        no2=datetime.datetime.now()
         try:
             client = pdfcrowd.HtmlToPdfClient('demo', 'ce544b6ea52a5621fb9d55f8b542d14d')
-            client.convertFileToFile('./../results/temp/concat.html', "./../results/pdfs/"+self.__pdfFileName)
+            output_stream = open( "./../results/pdfs/"+self.__pdfFileName, 'wb')
+            client.convertFileToStream('./../results/temp/concat.html', output_stream)
+            output_stream.close()
         except pdfcrowd.Error as why:
             sys.stderr.write('Pdfcrowd Error: {}\n'.format(why))
-
-            # rethrow or handle the exception
             raise
 
     def createReportName(self):
@@ -68,4 +70,6 @@ class Report:
 
 if __name__ == '__main__':
     ns=Report()
+    fg=FileGenerator()
+    fg.concat(["NMAP","NETDISCOVER"])
     ns.generateReport()

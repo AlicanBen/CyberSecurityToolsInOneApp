@@ -1,9 +1,13 @@
+import os
+
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLabel, QLineEdit, \
     QHBoxLayout, QFileDialog, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
+from Utils import FileGenerator
 from Utils.Tools import Tools
-
+from Utils.ReportPositions import ReportPositions
 
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs, Result
@@ -37,9 +41,6 @@ class Dirb:
         self.vBox.addWidget(self.urlEdit)
         self.fileDialog()
         self.vBox.addWidget(self.fileGBox)
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.outputFileedit = QLineEdit()
-        self.vBox.addWidget(self.outputFileedit)
         self.startButton=QPushButton("Start")
         self.startButton.clicked.connect(lambda:self.runButtonClick())
         self.vBox.addWidget(self.startButton)
@@ -174,17 +175,23 @@ class Dirb:
         self.win.close()
 
     def runButtonClick(self):
+
         self.__command.append(self.urlEdit.text())
         self.__command.append(self.filePath)
-        if (self.outputFileedit.text() != ""):
-            self.__command.append("-o")
-            self.__command.append(self.outputFileedit.text())
         print(self.__command)
         cexec = CommandExecuter("dirb", self.__command)
         cexec.run()
         result = cexec.getResult()
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
+        with open("./results/txts/DIRB.txt","w+") as file:
+            file.write(result.stdout.decode("utf-8"))
+        r=Report()
+        r.setFileName(ReportPositions.DIRB.name)
+        fg=FileGenerator()
+        t=fg.generateHtml(ReportPositions.DIRB.name+".txt")
+        if(t==True):
+            os.remove("./results/txts/"+ReportPositions.DIRB.name+".txt")
         self.__command.clear()
         self.respage=Result.Result(result.stdout.decode("utf-8"))
         self.respage.createWindow()
