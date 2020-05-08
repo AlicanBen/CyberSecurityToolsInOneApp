@@ -1,3 +1,6 @@
+import os
+import pathlib
+
 from bs4 import BeautifulSoup
 
 
@@ -5,6 +8,7 @@ class TextToHTML:
     __fileName = ""
     __fileDirectory = "./results/txts/"
     __htmlDirectory = "./results/htmls/"
+    __absoluteHtmlDirectory = "/root/Masaüstü/Project/results/htmls/"
     __soup = BeautifulSoup(features="html.parser")
 
 
@@ -18,6 +22,9 @@ class TextToHTML:
         if(self.__fileName[-4:]!=".txt"):
             return False
         else:
+            if(pathlib.Path(self.__absoluteHtmlDirectory+self.__fileName[:-4]+".html").exists()==True):
+                os.remove(self.__absoluteHtmlDirectory+self.__fileName[:-4]+".html")
+                self.__soup.clear()
             body = self.__soup.new_tag('body')
             self.__soup.insert(0, body)
             with open(self.__fileDirectory+self.__fileName) as infile:

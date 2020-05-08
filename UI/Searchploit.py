@@ -1,11 +1,15 @@
+import os
+
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QGroupBox, QWidget, QLineEdit, QCheckBox, \
     QHBoxLayout, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
+from Utils import ReportPositions, FileGenerator
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
-
+import re
 
 class Searchploit:
     __command=[]
@@ -47,8 +51,7 @@ class Searchploit:
         self.vBox.addWidget(gbox)
         self.case_sensitive=QCheckBox("Case Sensitive")
         self.vBox.addWidget(self.case_sensitive)
-        self.json=QCheckBox("Show result in JSON format")
-        self.vBox.addWidget(self.json)
+
 
     def createMenu(self):
         bar = self.win.menuBar()
@@ -105,12 +108,16 @@ class Searchploit:
 
         report = bar.addMenu("Reporting")
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
+
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
 
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
     def buttonClickHandler(self, text):
         self.window = QWidget()
@@ -157,14 +164,22 @@ class Searchploit:
         self.__command.append(self.searchEdit.text())
         if(self.case_sensitive.isChecked()):
             self.__command.append("-c")
-        if(self.json.isChecked()):
-            self.__command.append("-j")
         print(self.__command)
         cexec = CommandExecuter("searchsploit", self.__command)
-        cexec.Popen()
+        cexec.run()
         res = cexec.getResult()
+        print(res.stdout)
         cexec.clear()
-
-
+        result=res.stdout.decode("utf-8")
+        ansi_escape = re.compile(r'\x1b\[01;31m\x1b\[K' )
+        ansi_escape2=re.compile(r'\x1b\[m\x1b\[K')
+        with open("./results/txts/"+ReportPositions.SEARCHPLOIT.name+".txt", "w") as file:
+            file.write(ansi_escape2.sub('',ansi_escape.sub('', result)))
+        r = Report()
+        r.setFileName(ReportPositions.SEARCHPLOIT.name)
+        fg = FileGenerator()
+        t = fg.generateHtml(ReportPositions.SEARCHPLOIT.name + ".txt")
+        if (t == True):
+            os.remove("./results/txts/" + ReportPositions.SEARCHPLOIT.name + ".txt")
         self.__command.clear()
 

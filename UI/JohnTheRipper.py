@@ -1,9 +1,13 @@
+import os
+
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QGroupBox, QRadioButton, QPushButton, \
     QHBoxLayout, QFileDialog, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+from Utils import ReportPositions, FileGenerator
 from Utils.Tools import Tools
 
 
@@ -126,12 +130,16 @@ class JohnTheRipper:
 
         report = bar.addMenu("Reporting")
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
+
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
 
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
     def buttonClickHandler(self, text):
         self.window = QWidget()
@@ -182,6 +190,14 @@ class JohnTheRipper:
         cexec = CommandExecuter("john", self.__command)
         cexec.run()
         res = cexec.getResult()
+        with open("./results/txts/JOHNTHERIPPER.txt","w+") as file:
+            file.write(res.stdout.decode("utf-8"))
+        r=Report()
+        r.setFileName(ReportPositions.JOHNTHERIPPER.name)
+        fg=FileGenerator()
+        t=fg.generateHtml(ReportPositions.JOHNTHERIPPER.name+".txt")
+        if(t==True):
+            os.remove("./results/txts/"+ReportPositions.JOHNTHERIPPER.name+".txt")
         print(res.stdout.decode("utf-8"))
         self.__command.clear()
         cexec.clear()

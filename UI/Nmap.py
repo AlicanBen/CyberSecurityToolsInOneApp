@@ -1,7 +1,11 @@
+import os
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QMainWindow, QLabel, \
     QCheckBox, QScrollArea, QRadioButton, QComboBox, QPushButton, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
+from Utils import ReportPositions, FileGenerator
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
@@ -39,9 +43,6 @@ class Nmap:
         self.vBox=QVBoxLayout()
         self.scan_range_edit=QLineEdit()
         self.scan_range_edit.setPlaceholderText("1.1.1.1/24")
-        self.output_file_edit=QLineEdit()
-        self.type_xml=QRadioButton("XML Output")
-        self.type_txt=QRadioButton("TXT Output")
         self.scrolableOptions()
         self.speedComboBox()
         self.port_range=QLineEdit()
@@ -51,11 +52,6 @@ class Nmap:
 
         self.vBox.addWidget(QLabel("Scan Range (e.g. 1.1.1.1/24)"))
         self.vBox.addWidget(self.scan_range_edit)
-        self.vBox.addWidget(QLabel("Output Type"))
-        self.vBox.addWidget(self.type_xml)
-        self.vBox.addWidget(self.type_txt)
-        self.vBox.addWidget(QLabel("Output File Name"))
-        self.vBox.addWidget(self.output_file_edit)
         self.vBox.addWidget(self.options)
         self.vBox.addWidget(self.speedGBox)
         self.vBox.addWidget(QLabel("Port Range (e.g. 1-1000, default= all ports)"))
@@ -170,11 +166,15 @@ class Nmap:
 
         report = bar.addMenu("Reporting")
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
+
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
 
     def buttonClickHandler(self, text):
@@ -265,15 +265,9 @@ class Nmap:
             self.__command.append("-p")
             self.__command.append( self.port_range.text())
 
-        if(self.type_txt.isChecked()):
-            self.__command.append("-oN")
-            self.__command.append(self.output_file_edit.text())
-        elif(self.type_xml.isChecked()):
-            self.__command.append("-oX")
-            self.__command.append(self.output_file_edit.text())
-        else:
-            self.__command.append("-oX")
-            self.__command.append("nmap.xml")
+
+        self.__command.append("-oX")
+        self.__command.append("./results/xmls/"+ReportPositions.NMAP.name+".xml")
 
         self.__command.append(self.scan_range_edit.text())
         print(self.__command)
@@ -281,6 +275,12 @@ class Nmap:
         cexec = CommandExecuter("nmap", self.__command)
         cexec.run()
         res = cexec.getResult()
+        r = Report()
+        r.setFileName(ReportPositions.NMAP.name)
+        fg = FileGenerator()
+        t = fg.generateHtml(ReportPositions.NMAP.name + ".xml")
+        os.remove("./results/xmls/" + ReportPositions.NMAP.name + ".xml")
+
         print(res.stdout.decode("utf-8"))
 
 

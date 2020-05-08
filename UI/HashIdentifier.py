@@ -103,12 +103,15 @@ class HashIdentifier:
         self.actionTheHarvester.triggered.connect(lambda: self.buttonClickHandler(self.actionTheHarvester.text()))
 
         report = bar.addMenu("Reporting")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
 
     def buttonClickHandler(self, text):

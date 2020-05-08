@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QLineEdit, QGroupBox, QMainWindow, QWidget, QComboBox, \
     QCheckBox, QHBoxLayout, QFileDialog, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
 from Utils.Tools import Tools
 
@@ -118,12 +119,16 @@ class Netdiscover:
 
         report = bar.addMenu("Reporting")
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
+
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
 
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
     def buttonClickHandler(self, text):
         self.window = QWidget()

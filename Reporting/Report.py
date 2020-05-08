@@ -6,7 +6,7 @@ import pdfcrowd
 from Utils import FileGenerator
 from Utils.ReportPositions import ReportPositions
 class Report:
-
+    __fileGenerator=FileGenerator()
     __files={
         ReportPositions.NETDISCOVER.name :"",
         ReportPositions.DNSENUM.name :"",
@@ -51,14 +51,19 @@ class Report:
         return self.__files
 
     def generateReport(self):
+        print(self.__files)
+        count=0
+        for key,value in self.__files.items():
+            if(value!=""):
+                count+=1
+        if(count==0):
+            return
+        self.__fileGenerator.concat(self.__files)
         self.createReportName()
-        diff=[]
-        tmp=0
-        no2=datetime.datetime.now()
         try:
             client = pdfcrowd.HtmlToPdfClient('demo', 'ce544b6ea52a5621fb9d55f8b542d14d')
-            output_stream = open( "./../results/pdfs/"+self.__pdfFileName, 'wb')
-            client.convertFileToStream('./../results/temp/concat.html', output_stream)
+            output_stream = open( "./results/pdfs/"+self.__pdfFileName, 'wb')
+            client.convertFileToStream('./results/temp/concat.html', output_stream)
             output_stream.close()
         except pdfcrowd.Error as why:
             sys.stderr.write('Pdfcrowd Error: {}\n'.format(why))
@@ -67,9 +72,3 @@ class Report:
     def createReportName(self):
         self.__pdfFileName="Report"+datetime.datetime.now().strftime("_%Y%m%d%H%M%S")+".pdf"
 
-
-if __name__ == '__main__':
-    ns=Report()
-    fg=FileGenerator()
-    fg.concat(["NMAP","NETDISCOVER"])
-    ns.generateReport()

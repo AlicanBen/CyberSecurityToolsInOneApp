@@ -126,12 +126,16 @@ class Dirb:
         self.actionTheHarvester.triggered.connect(lambda: self.buttonClickHandler(self.actionTheHarvester.text()))
 
         report = bar.addMenu("Reporting")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
         self.aboutUs=bar.addAction("About Us")
         self.aboutUs.triggered.connect(lambda: self.buttonClickHandler(self.aboutUs.text()))
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
+
 
     def buttonClickHandler(self, text):
         self.window = QWidget()
@@ -184,7 +188,7 @@ class Dirb:
         result = cexec.getResult()
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
-        with open("./results/txts/DIRB.txt","w+") as file:
+        with open("./results/txts/DIRB.txt","w") as file:
             file.write(result.stdout.decode("utf-8"))
         r=Report()
         r.setFileName(ReportPositions.DIRB.name)

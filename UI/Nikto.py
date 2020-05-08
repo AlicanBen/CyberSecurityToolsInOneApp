@@ -1,9 +1,14 @@
+import os
+import pathlib
+
 from PyQt5.QtWidgets import QPushButton, QLineEdit, QHBoxLayout, QGroupBox, QVBoxLayout, QWidget, QMainWindow, \
     QCheckBox, QLabel, QRadioButton, QScrollArea, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
     Netdiscover, Nikto, Nmap, Searchploit, TheHarvester, Home, AboutUs
+from Utils import ReportPositions
 from Utils.Tools import Tools
 
 
@@ -48,14 +53,10 @@ class Nikto:
         self.leftBox.setStyleSheet("QGroupBox { border-style: none;}")
         vLayout=QVBoxLayout()
 
-        self.outputFormats()
         self.outputDisplay()
 
         self.host=QLineEdit()
         self.port=QLineEdit()
-        self.output=QLineEdit()
-        self.outputFormat=QCheckBox("Output Format (default : plain text)")
-        self.outputFormat.toggled.connect(lambda : self.checkboxHandler(self.outputFormat,self.outputscrollArea))
         self.dbCheck=QCheckBox("Check Database")
         self.displayOutput=QCheckBox("Display Output")
         self.displayOutput.toggled.connect(lambda : self.checkboxHandler(self.displayOutput,self.displayScrollArea))
@@ -64,11 +65,7 @@ class Nikto:
         vLayout.addWidget(self.host)
         vLayout.addWidget(QLabel("Target Port (Default: 80"))
         vLayout.addWidget(self.port)
-        vLayout.addWidget(QLabel("Output File Name"))
-        vLayout.addWidget(self.output)
         vLayout.addWidget(self.dbCheck)
-        vLayout.addWidget(self.outputFormat)
-        vLayout.addWidget(self.outputscrollArea)
         vLayout.addWidget(self.displayOutput)
         vLayout.addWidget(self.displayScrollArea)
 
@@ -146,11 +143,15 @@ class Nikto:
 
         report = bar.addMenu("Reporting")
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
+
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
 
     def buttonClickHandler(self, text):
@@ -195,28 +196,6 @@ class Nikto:
         self.ui.showWindow()
         self.win.close()
 
-    def outputFormats(self):
-        self.outputscrollArea = QScrollArea()
-        self.outputscrollArea.setVisible(False)
-        self.outputscrollArea.setFixedHeight(100)
-        formatGBox=QGroupBox()
-        vBox=QVBoxLayout()
-        self.csv=QRadioButton("Comma-separated-value (csv file)")
-        self.json=QRadioButton("JSON Format")
-        self.html=QRadioButton("HTML Format")
-        self.nbe=QRadioButton("Nessus NBE Format (nbe file)")
-        self.sqlShema=QRadioButton("Generic SQL Shema")
-        self.plainText=QRadioButton("Plain Text")
-        self.xml=QRadioButton("XML Format")
-
-        vBox.addWidget(self.csv)
-        vBox.addWidget(self.json)
-        vBox.addWidget(self.html)
-        vBox.addWidget(self.nbe)
-        vBox.addWidget(self.sqlShema)
-        vBox.addWidget(self.plainText)
-        formatGBox.setLayout(vBox)
-        self.outputscrollArea.setWidget(formatGBox)
 
     def outputDisplay(self):
         self.displayScrollArea = QScrollArea()
@@ -291,9 +270,11 @@ class Nikto:
             groupBox.setVisible(False)
 
     def buttonHandler(self):
-        self.__command.append("-Display")
-        displaystr = "P"
+
+
         if (self.displayOutput.isChecked()):
+            self.__command.append("-Display")
+            displaystr = "P"
             if(self.redirect.isChecked()):
                 displaystr+="1"
             if(self.receivedCookies.isChecked()):
@@ -306,27 +287,15 @@ class Nikto:
                 displaystr+="D"
             if(self.verbose.isChecked()):
                 displaystr+="V"
-        self.__command.append(displaystr)
-        if(self.output.text()!=""):
-            self.__command.append("-o")
-            self.__command.append("./"+self.output.text())
+            self.__command.append(displaystr)
 
-        if(self.outputFormat.isChecked()):
-            self.__command.append("-Format")
-            if(self.csv.isChecked()):
-                self.__command.append("csv")
-            elif(self.json.isChecked()):
-                self.__command.append("json")
-            elif(self.html.isChecked()):
-                self.__command.append("htm")
-            elif(self.nbe.isChecked()):
-                self.__command.append("nbe")
-            elif(self.sqlShema.isChecked()):
-                self.__command.append("sql")
-            elif(self.plainText.isChecked()):
-                self.__command.append("txt")
-            elif(self.xml.isChecked()):
-                self.__command.append("xml")
+        if(pathlib.Path("./results/htmls/" + ReportPositions.NIKTO.name + ".html").exists()==True):
+            os.remove("./results/htmls/" + ReportPositions.NIKTO.name + ".html")
+        self.__command.append("-o")
+        self.__command.append("./results/htmls/" + ReportPositions.NIKTO.name + ".html")
+        self.__command.append("-Format")
+        self.__command.append("htm")
+
         if(self.dbCheck.isChecked()):
             self.__command.append("-dbcheck")
 
@@ -376,6 +345,9 @@ class Nikto:
         cexec = CommandExecuter("nikto", self.__command)
         cexec.Popen()
         res = cexec.getResult()
+        r=Report()
+        r.setFileName(ReportPositions.NIKTO.name)
+        print(res.communicate())
         self.__command.clear()
         cexec.clear()
 

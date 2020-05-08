@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QLabel, \
     QRadioButton, QDesktopWidget
 
+from Reporting import Report
 from Services import CommandExecuter
 from Utils.Tools import Tools
 from UI import Crunch, Dirb, Dmitry, Dnsenum, GppDecrypt, HashIdentifier, Hashcat, Hping3, JohnTheRipper, Maskprocessor, \
@@ -131,11 +132,15 @@ class Hping3:
 
         report = bar.addMenu("Reporting")
 
-        report.addAction("Create")
-        report.addAction("Show")
-        report.addAction("Delete")
+        self.createReport=report.addAction("Create")
+        self.createReport.triggered.connect(lambda: self.creatingReport())
+
         self.actionAboutUs = bar.addAction("About Us")
         self.actionAboutUs.triggered.connect(lambda: self.buttonClickHandler(self.actionAboutUs.text()))
+
+    def creatingReport(self):
+        r=Report()
+        r.generateReport()
 
 
     def buttonClickHandler(self, text):
